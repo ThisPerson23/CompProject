@@ -49,7 +49,7 @@ namespace GEX
 	}
 
 	Game::Game()
-		: window_(sf::VideoMode(1200, 800), "Killer Planes!")
+		: window_(sf::VideoMode(1200, 800), "Boxhead")
 		, world_(window_, sounds_)
 		, statisticsText_()
 		, statisticsUpdateTime_(sf::Time::Zero)
@@ -63,8 +63,8 @@ namespace GEX
 		}
 
 		statisticsText_.setFont(font_);
-		statisticsText_.setPosition(15.0f, 15.0f);
-		statisticsText_.setCharacterSize(15);
+		statisticsText_.setPosition(5.f, 5.f);
+		statisticsText_.setCharacterSize(12.f);
 		statisticsText_.setString("Frames Per Second = \nTime / Update = ");
 	}
 

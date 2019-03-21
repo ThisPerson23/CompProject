@@ -63,6 +63,8 @@ namespace GEX
 		void					drawCurrent(sf::RenderTarget& target, sf::RenderStates states) const override;
 		unsigned int			getCategory() const override;
 
+		sf::FloatRect			getBoundingBox() const override;
+
 		bool					isMarkedForRemoval() const override;
 
 		void					remove() override;

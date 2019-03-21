@@ -49,6 +49,7 @@ namespace Category
 		ParticleSystem		= 1 << 8,
 		SoundEffect			= 1 << 9,
 		Zombie				= 1 << 10,
+		Skeleton			= 1 << 11,
 
 		Aircraft	 = PlayerAircraft | AlliedAircraft | EnemyAircraft,
 		Projectile	 = EnemyProjectile | AlliedProjectile

@@ -337,10 +337,17 @@ namespace GEX
 		textures_.load(GEX::TextureID::FinishLine, "Media/Textures/FinishLine.png");
 
 		//Animations
+		//Zombies
 		textures_.load(GEX::TextureID::ZombieWalkUp, "Media/Textures/zombie_walk_up.png");
 		textures_.load(GEX::TextureID::ZombieWalkLeft, "Media/Textures/zombie_walk_left.png");
 		textures_.load(GEX::TextureID::ZombieWalkDown, "Media/Textures/zombie_walk_down.png");
 		textures_.load(GEX::TextureID::ZombieWalkRight, "Media/Textures/zombie_walk_right.png");
+
+		//Skeletons
+		textures_.load(GEX::TextureID::SkeletonWalkUp, "Media/Textures/undeadking_walk_up.png");
+		textures_.load(GEX::TextureID::SkeletonWalkLeft, "Media/Textures/undeadking_walk_left.png");
+		textures_.load(GEX::TextureID::SkeletonWalkDown, "Media/Textures/undeadking_walk_down.ng");
+		textures_.load(GEX::TextureID::SkeletonWalkRight, "Media/Textures/undeadking_walk_right.png");
 	}
 
 	void World::buildScene()

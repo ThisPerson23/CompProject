@@ -46,11 +46,14 @@ namespace GEX
 		FinishLine,
 		Zombie,
 		Skeleton,
-		UndeadKing,
 		ZombieWalkUp,
 		ZombieWalkLeft,
 		ZombieWalkDown,
-		ZombieWalkRight
+		ZombieWalkRight,
+		SkeletonWalkUp,
+		SkeletonWalkLeft,
+		SkeletonWalkDown,
+		SkeletonWalkRight
 	};
 
 	enum class MusicID
