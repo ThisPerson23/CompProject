@@ -51,7 +51,7 @@ namespace GEX
 	Zombie::Zombie(Zombie::ZombieType type, const TextureManager& textures)
 		: Entity(TABLE.at(type).hitpoints)
 		, type_(type)
-		, state_(Zombie::State::Down)
+		, state_()
 		, walkUp_(textures.get(TextureID::ZombieWalkUp))
 		, walkLeft_(textures.get(TextureID::ZombieWalkLeft))
 		, walkDown_(textures.get(TextureID::ZombieWalkDown))
@@ -71,6 +71,17 @@ namespace GEX
 	void Zombie::drawCurrent(sf::RenderTarget & target, sf::RenderStates states) const
 	{
 		target.draw(sprite_, states);
+
+		/*if (getVelocity().x > 0)
+			target.draw(walkRight_, states);
+		else if (getVelocity().x < 0)
+			target.draw(walkLeft_, states);
+		else if (getVelocity().y > 0)
+			target.draw(walkDown_, states);
+		else if (getVelocity().y < 0)
+			target.draw(walkUp_, states);
+		else if (getVelocity().x == 0 && getVelocity().y == 0)
+			target.draw(sprite_, states);*/
 	}
 
 	unsigned int Zombie::getCategory() const
@@ -110,6 +121,10 @@ namespace GEX
 		//Update the states
 		updateStates(dt);
 
+		animations_[state_].update(dt);
+
+		Entity::updateCurrent(dt, commands);
+
 		if (isDestroyed() && state_ == Zombie::State::Dead)
 		{
 			//Start death animation
@@ -129,22 +144,22 @@ namespace GEX
 	void Zombie::updateStates(sf::Time dt)
 	{
 		if (isDestroyed())
-			state_ = Zombie::State::Dead;
+			setState(Zombie::State::Dead);
 		else
 		{
 			if (getVelocity().y != 0)
 			{
 				if (getVelocity().y < 0)
-					state_ = Zombie::State::Up;
+					setState(Zombie::State::Up);
 				else
-					state_ = Zombie::State::Down;
+					setState(Zombie::State::Down);
 			}
 			else
 			{
 				if (getVelocity().x < 0)
-					state_ = Zombie::State::Left;
+					setState(Zombie::State::Left);
 				else
-					state_ = Zombie::State::Right;
+					setState(Zombie::State::Right);
 			}
 		}
 
@@ -178,19 +193,23 @@ namespace GEX
 	{
 		walkUp_.setFrameSize(sf::Vector2i(33, 15));
 		walkUp_.setNumFrames(3);
-		walkUp_.setDuration(sf::milliseconds(500));
+		walkUp_.setDuration(sf::seconds(2));
+		walkUp_.setRepeating(true);
 
 		walkLeft_.setFrameSize(sf::Vector2i(33, 15));
 		walkLeft_.setNumFrames(3);
-		walkLeft_.setDuration(sf::milliseconds(500));
+		walkLeft_.setDuration(sf::seconds(2));
+		walkLeft_.setRepeating(true);
 
 		walkDown_.setFrameSize(sf::Vector2i(33, 15));
 		walkDown_.setNumFrames(3);
-		walkDown_.setDuration(sf::milliseconds(500));
+		walkDown_.setDuration(sf::seconds(2));
+		walkDown_.setRepeating(true);
 
 		walkRight_.setFrameSize(sf::Vector2i(33, 15));
 		walkRight_.setNumFrames(3);
-		walkRight_.setDuration(sf::milliseconds(500));
+		walkRight_.setDuration(sf::seconds(2));
+		walkRight_.setRepeating(true);
 
 		animations_[Zombie::State::Up] = walkUp_;
 		animations_[Zombie::State::Left] = walkLeft_;

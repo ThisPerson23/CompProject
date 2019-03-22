@@ -45,6 +45,8 @@
 #include "Category.h"
 #include "CommandQueue.h"
 #include "SoundPlayer.h"
+#include "Zombie.h"
+#include "Skeleton.h"
 
 #include <vector>
 
@@ -55,6 +57,19 @@ namespace sf
 
 namespace GEX
 { 
+	struct Spawnpoint
+	{
+		Spawnpoint(/*Aircraft::Type _type, */float _x, float _y)
+			/*: type(_type)*/
+			: x(_x)
+			, y(_y)
+		{}
+
+		/*Aircraft::Type type;*/
+		float			x;
+		float			y;
+	};
+
 	class World
 	{
 	public:
@@ -74,15 +89,21 @@ namespace GEX
 		void						adaptPlayerVelocity();
 		void						adaptPlayerPosition();
 
+		void						adaptEnemies();
+
 		void						addEnemies();
-		void						addEnemy(Aircraft::Type type, float relX, float relY);
+		void						addEnemy(Spawnpoint spawn);
 		void						spawnEnemies();
 
 		sf::FloatRect				getViewBounds() const;
 		sf::FloatRect				getBattlefieldBounds() const;
 
+		void						enemiesChasePlayer();
+
 		void						guideMissiles();		
 		void						handleCollision();
+
+		void						setupSpawnPoints();	
 
 		void						destroyEntitiesOutOfView();
 
@@ -92,22 +113,10 @@ namespace GEX
 		enum Layer 
 		{
 			Background = 0,
+			Ground,
 			LowerAir,
 			UpperAir,
 			LayerCount
-		};
-
-		struct Spawnpoint
-		{
-			Spawnpoint(Aircraft::Type _type, float _x, float _y)
-				: type(_type)
-				, x(_x)
-				, y(_y)
-			{}
-
-			Aircraft::Type type;
-			float			x;
-			float			y;
 		};
 
 	private:
@@ -128,5 +137,13 @@ namespace GEX
 		std::vector<Spawnpoint>		enemySpawnPoints_;
 
 		std::vector<Aircraft*>		activeEnemies_;
+
+		std::vector<Zombie*>		activeZombies_;
+		std::vector<Skeleton*>		activeSkeletons_;
+
+		sf::Text					scoreText_;
+		sf::Text					multiplierText_;
+		int							multiplier_;
+		int							score_;
 	};
 }

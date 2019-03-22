@@ -49,7 +49,7 @@ namespace GEX
 	}
 
 	Game::Game()
-		: window_(sf::VideoMode(1200, 800), "Boxhead")
+		: window_(sf::VideoMode(1680, 1050), "Boxhead")
 		, world_(window_, sounds_)
 		, statisticsText_()
 		, statisticsUpdateTime_(sf::Time::Zero)

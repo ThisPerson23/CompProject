@@ -138,13 +138,13 @@ namespace GEX
 		healthDisplay_->setPosition(0.f, 50.f);
 		healthDisplay_->setRotation(-getRotation());
 
-		// Display missiles, if available
+		// Display ammo, if available
 		if (missileDisplay_)
 		{
 			if (missileAmmo_ == 0 || isDestroyed())
 				missileDisplay_->setString("");
 			else
-				missileDisplay_->setString("M: " + std::to_string(missileAmmo_));
+				missileDisplay_->setString("Ammo: " + std::to_string(missileAmmo_));
 		}
 	}
 

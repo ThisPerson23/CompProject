@@ -44,6 +44,7 @@ namespace GEX
 		Explosion,
 		Particle,
 		FinishLine,
+		LunarBackground,
 		Zombie,
 		Skeleton,
 		ZombieWalkUp,

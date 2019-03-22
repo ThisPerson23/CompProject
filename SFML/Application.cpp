@@ -45,7 +45,7 @@ const sf::Time Application::TimePerFrame = sf::seconds(1.0f / 60.0f);		//seconds
 
 
 Application::Application()
-	: window_(sf::VideoMode(1280, 960), "Killer Planes", sf::Style::Close)
+	: window_(sf::VideoMode(1680, 1050), "Boxhead", sf::Style::Close)
 	, player_()
 	, textures_()
 	, music_()
@@ -63,7 +63,7 @@ Application::Application()
 	textures_.load(GEX::TextureID::GEXStateFace, "Media/face.png");
 
 	statisticsText_.setFont(GEX::FontManager::getInstance().get(GEX::FontID::Main));
-	statisticsText_.setPosition(15.0f, 15.0f);
+	statisticsText_.setPosition(1500.f, 15.0f);
 	statisticsText_.setCharacterSize(15);
 	statisticsText_.setString("Frames Per Second = \nTime / Update = ");
 

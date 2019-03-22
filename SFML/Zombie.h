@@ -34,8 +34,8 @@
 
 #pragma once
 
-#include "Entity.h"
 #include "Animation.h"
+#include "Entity.h"
 #include "TextureManager.h"
 
 namespace GEX
@@ -72,12 +72,13 @@ namespace GEX
 
 		void					playLocalSound(CommandQueue& commands, SoundEffectID effect);
 
+		float					getMaxSpeed() const;
+
 	protected:
 		void					updateCurrent(sf::Time dt, CommandQueue& commands) override;
 
 	private:
-		float					getMaxSpeed() const;
-
+		
 		void					updateStates(sf::Time dt);
 
 		void					setState(Zombie::State state);
