@@ -39,7 +39,7 @@ namespace Category
 	{
 		None				= 0,
 		Scene				= 1 << 0,
-		PlayerAircraft		= 1 << 1,
+		Player		= 1 << 1,
 		AlliedAircraft		= 1 << 2,
 		EnemyAircraft		= 1 << 3,
 		EnemyProjectile		= 1 << 4,
@@ -51,7 +51,7 @@ namespace Category
 		Zombie				= 1 << 10,
 		Skeleton			= 1 << 11,
 
-		Aircraft	 = PlayerAircraft | AlliedAircraft | EnemyAircraft,
+		Aircraft	 = Player | AlliedAircraft | EnemyAircraft,
 		Projectile	 = EnemyProjectile | AlliedProjectile
 	};
 }

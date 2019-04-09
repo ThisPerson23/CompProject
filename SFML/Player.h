@@ -46,7 +46,7 @@
 
 namespace GEX
 {
-	class Aircraft : public Entity
+	class Player : public Entity
 	{
 	public:
 		enum class Type
@@ -57,7 +57,7 @@ namespace GEX
 		};
 
 	public:
-								Aircraft(Aircraft::Type type, const TextureManager& textures);
+								Player(Player::Type type, const TextureManager& textures);
 		
 		void					drawCurrent(sf::RenderTarget& target, sf::RenderStates states) const override;
 		unsigned int			getCategory() const override;

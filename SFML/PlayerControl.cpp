@@ -33,7 +33,7 @@
 */
 
 #include "PlayerControl.h"
-#include "Aircraft.h"
+#include "Player.h"
 #include "Command.h"
 #include "Category.h"
 #include "CommandQueue.h"
@@ -49,7 +49,7 @@ namespace GEX
 			: velocity(vx, vy)
 		{}
 
-		void operator() (Aircraft& aircraft, sf::Time dt) const
+		void operator() (Player& aircraft, sf::Time dt) const
 		{
 			aircraft.accelerate(velocity);
 		}
@@ -73,21 +73,21 @@ namespace GEX
 		initializeActions();
 
 		for (auto& pair : actionBindings_)
-			pair.second.category = Category::PlayerAircraft;
+			pair.second.category = Category::Player;
 
 		// rotate raptors
 		keyBindings_[sf::Keyboard::R] = Action::RR;
 		keyBindings_[sf::Keyboard::L] = Action::RL;
-		actionBindings_[Action::RR].action = derivedAction<Aircraft>([](Aircraft& node, sf::Time dt) {node.rotate(+10.f); });
-		actionBindings_[Action::RL].action = derivedAction<Aircraft>([](Aircraft& node, sf::Time dt) {node.rotate(-10.f); });
+		actionBindings_[Action::RR].action = derivedAction<Player>([](Player& node, sf::Time dt) {node.rotate(+10.f); });
+		actionBindings_[Action::RL].action = derivedAction<Player>([](Player& node, sf::Time dt) {node.rotate(-10.f); });
 		actionBindings_[Action::RR].category = Category::EnemyAircraft;
 		actionBindings_[Action::RL].category = Category::EnemyAircraft;
 
 		//actionBindings_[Action::Fire].action = derivedAction<Aircraft>(std::bind(&Aircraft::fire, std::placeholders::_1));
-		actionBindings_[Action::Fire].category = Category::PlayerAircraft;
+		actionBindings_[Action::Fire].category = Category::Player;
 
 		//actionBindings_[Action::LaunchMissile].action = derivedAction<Aircraft>(std::bind(&Aircraft::launchMissile, std::placeholders::_1));
-		actionBindings_[Action::LaunchMissile].category = Category::PlayerAircraft;
+		actionBindings_[Action::LaunchMissile].category = Category::Player;
 	}
 
 	void PlayerControl::handleEvent(const sf::Event & event, CommandQueue & commands)
@@ -129,13 +129,13 @@ namespace GEX
 	{
 		const float playerSpeed = 200.f;
 
-		actionBindings_[Action::MoveLeft].action = derivedAction<Aircraft>(AircraftMover(-playerSpeed, 0.f));
-		actionBindings_[Action::MoveRight].action = derivedAction<Aircraft>(AircraftMover(playerSpeed, 0.f));
-		actionBindings_[Action::MoveUp].action = derivedAction<Aircraft>(AircraftMover(0.f, -playerSpeed));
-		actionBindings_[Action::MoveDown].action = derivedAction<Aircraft>(AircraftMover(0.f, playerSpeed));
+		actionBindings_[Action::MoveLeft].action = derivedAction<Player>(AircraftMover(-playerSpeed, 0.f));
+		actionBindings_[Action::MoveRight].action = derivedAction<Player>(AircraftMover(playerSpeed, 0.f));
+		actionBindings_[Action::MoveUp].action = derivedAction<Player>(AircraftMover(0.f, -playerSpeed));
+		actionBindings_[Action::MoveDown].action = derivedAction<Player>(AircraftMover(0.f, playerSpeed));
 
-		actionBindings_[Action::Fire].action = derivedAction<Aircraft>(std::bind(&Aircraft::fire, std::placeholders::_1));
-		actionBindings_[Action::LaunchMissile].action = derivedAction<Aircraft>(std::bind(&Aircraft::launchMissile, std::placeholders::_1));
+		actionBindings_[Action::Fire].action = derivedAction<Player>(std::bind(&Player::fire, std::placeholders::_1));
+		actionBindings_[Action::LaunchMissile].action = derivedAction<Player>(std::bind(&Player::launchMissile, std::placeholders::_1));
 	}
 
 	bool PlayerControl::isRealTimeAction(Action action)

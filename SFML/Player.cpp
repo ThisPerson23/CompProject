@@ -32,7 +32,7 @@
 * NBCC Academic Integrity Policy (policy 1111)
 */
 
-#include "Aircraft.h"
+#include "Player.h"
 #include "DataTables.h"
 #include "Utility.h"
 #include "Category.h"
@@ -48,10 +48,10 @@ namespace GEX
 { 
 	namespace
 	{
-		const std::map<Aircraft::Type, AircraftData> TABLE = initializeAircraftData();
+		const std::map<Player::Type, PlayerData> TABLE = initializePlayerData();
 	}
 	
-	Aircraft::Aircraft(Aircraft::Type type, const TextureManager& textures)
+	Player::Player(Player::Type type, const TextureManager& textures)
 		: Entity(TABLE.at(type).hitpoints)
 		, type_(type)
 		, sprite_(textures.get(TABLE.at(type).texture), TABLE.at(type).textureRect)
@@ -76,6 +76,7 @@ namespace GEX
 		, launchMissileCommand_()
 		, dropPickupCommand_()
 		, spawnPickup_(false)
+		, hasPlayedExplosionSound_(false)
 	{
 		setupAnimations();
 
@@ -103,7 +104,7 @@ namespace GEX
 		healthDisplay_ = health.get();
 		attachChild(std::move(health));
 
-		if (getCategory() == Category::PlayerAircraft)
+		if (getCategory() == Category::Player)
 		{
 			std::unique_ptr<TextNode> missileDisplay(new TextNode(""));
 			missileDisplay->setPosition(0, 70);
@@ -115,18 +116,18 @@ namespace GEX
 		
 	}
 
-	unsigned int Aircraft::getCategory() const
+	unsigned int Player::getCategory() const
 	{
 		switch (type_)
 		{
 		case Type::Eagle:
-			return Category::PlayerAircraft;
+			return Category::Player;
 		default:
 			return Category::EnemyAircraft;
 		}
 	}
 
-	void Aircraft::updateTexts()
+	void Player::updateTexts()
 	{
 		// Display hitpoints
 		if (isDestroyed())
@@ -147,7 +148,7 @@ namespace GEX
 		}
 	}
 
-	void Aircraft::updateRollAnimation()
+	void Player::updateRollAnimation()
 	{
 		if (TABLE.at(type_).hasRollAnimation)
 		{
@@ -163,35 +164,35 @@ namespace GEX
 		}
 	}
 
-	void Aircraft::fire()
+	void Player::fire()
 	{
 		if (TABLE.at(type_).fireInterval != sf::Time::Zero)
 			isFiring_ = true;
 	}
 
-	void Aircraft::launchMissile()
+	void Player::launchMissile()
 	{
 		isLaunchingMissiles_ = true;
 	}
 
-	void Aircraft::increaseFireRate()
+	void Player::increaseFireRate()
 	{
 		if (fireRateLevel_ < 10)
 			++fireRateLevel_;
 	}
 
-	void Aircraft::increaseFireSpread()
+	void Player::increaseFireSpread()
 	{
 		if (fireSpreadLevel_ < 3)
 			++fireSpreadLevel_;
 	}
 
-	void Aircraft::collectMissiles(unsigned int count)
+	void Player::collectMissiles(unsigned int count)
 	{
 		missileAmmo_ += count;
 	}
 
-	sf::FloatRect Aircraft::getBoundingBox() const
+	sf::FloatRect Player::getBoundingBox() const
 	{
 		auto box = getWorldTransform().transformRect(sprite_.getGlobalBounds());
 
@@ -203,23 +204,23 @@ namespace GEX
 		return box;
 	}
 
-	bool Aircraft::isMarkedForRemoval() const
+	bool Player::isMarkedForRemoval() const
 	{
 		return isDestroyed() && (explosion_.isFinished() || !showExplosion_);
 	}
 
-	void Aircraft::remove()
+	void Player::remove()
 	{
 		Entity::remove();
 		showExplosion_ = false;
 	}
 
-	bool Aircraft::isAllied() const
+	bool Player::isAllied() const
 	{
 		return type_ == Type::Eagle;
 	}
 
-	void Aircraft::playLocalSound(CommandQueue& commands, SoundEffectID effect)
+	void Player::playLocalSound(CommandQueue& commands, SoundEffectID effect)
 	{
 		Command playSoundCommand;
 		playSoundCommand.category = Category::SoundEffect;
@@ -230,7 +231,7 @@ namespace GEX
 		commands.push(playSoundCommand);
 	}
 
-	void Aircraft::updateCurrent(sf::Time dt, CommandQueue& commands)
+	void Player::updateCurrent(sf::Time dt, CommandQueue& commands)
 	{
 		//Check if bullets or missiles are fired
 		checkProjectileLaunch(dt, commands);
@@ -271,7 +272,7 @@ namespace GEX
 		}
 	}
 
-	void Aircraft::updateMovementPattern(sf::Time dt)
+	void Player::updateMovementPattern(sf::Time dt)
 	{
 		// movement pattern
 		const std::vector<Direction>& directions = TABLE.at(type_).directions;
@@ -293,12 +294,12 @@ namespace GEX
 		}
 	}
 
-	float Aircraft::getMaxSpeed() const
+	float Player::getMaxSpeed() const
 	{
 		return TABLE.at(type_).speed;
 	}
 
-	void Aircraft::createBullets(SceneNode & node, const TextureManager & textures)
+	void Player::createBullets(SceneNode & node, const TextureManager & textures)
 	{
 		Projectile::Type type = isAllied() ? Projectile::Type::AlliedBullet : Projectile::Type::EnemyBullet;
 
@@ -319,7 +320,7 @@ namespace GEX
 		}
 	}
 
-	void Aircraft::createProjectile(SceneNode & node, Projectile::Type type, float xoffset, float yoffset, const TextureManager & textures)
+	void Player::createProjectile(SceneNode & node, Projectile::Type type, float xoffset, float yoffset, const TextureManager & textures)
 	{
 		std::unique_ptr<Projectile> projectile(new Projectile(type, textures));
 
@@ -332,7 +333,7 @@ namespace GEX
 		node.attachChild(std::move(projectile));
 	}
 
-	void Aircraft::createPickup(SceneNode & node, const TextureManager & textures) const
+	void Player::createPickup(SceneNode & node, const TextureManager & textures) const
 	{
 		auto type = static_cast<Pickup::Type>(randomInt(static_cast<int>(Pickup::Type::Count)));
 
@@ -342,7 +343,7 @@ namespace GEX
 		node.attachChild(std::move(pickup));
 	}
 
-	void Aircraft::checkPickupDrop(CommandQueue & commands)
+	void Player::checkPickupDrop(CommandQueue & commands)
 	{
 		if (!isAllied() && randomInt(3) == 0 && !spawnPickup_)
 			commands.push(dropPickupCommand_);
@@ -350,7 +351,7 @@ namespace GEX
 		spawnPickup_ = true;
 	}
 
-	void Aircraft::checkProjectileLaunch(sf::Time dt, CommandQueue & commands)
+	void Player::checkProjectileLaunch(sf::Time dt, CommandQueue & commands)
 	{
 		//enemies always fire
 		if (!isAllied())
@@ -382,7 +383,7 @@ namespace GEX
 		}
 	}
 
-	void Aircraft::drawCurrent(sf::RenderTarget & target, sf::RenderStates states) const
+	void Player::drawCurrent(sf::RenderTarget & target, sf::RenderStates states) const
 	{
 		if (isDestroyed() && showExplosion_)
 			target.draw(explosion_, states);
@@ -398,7 +399,7 @@ namespace GEX
 			target.draw(sprite_, states);
 	}
 
-	void Aircraft::setupAnimations() 
+	void Player::setupAnimations() 
 	{
 		//Death
 		explosion_.setFrameSize(sf::Vector2i(256, 256));

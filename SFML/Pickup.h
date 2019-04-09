@@ -35,7 +35,7 @@
 #pragma once
 
 #include "Entity.h"
-#include "Aircraft.h"
+#include "Player.h"
 #include "TextureManager.h"
 
 namespace GEX
@@ -58,7 +58,7 @@ namespace GEX
 
 		unsigned int	getCategory() const override;
 		sf::FloatRect	getBoundingBox() const override;
-		void			apply(Aircraft& player);
+		void			apply(Player& player);
 
 	private:
 		void			drawCurrent(sf::RenderTarget& target, sf::RenderStates states) const override;

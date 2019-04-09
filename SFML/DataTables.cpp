@@ -61,40 +61,40 @@ namespace GEX
 		return data;
 	}
 
-	std::map<Aircraft::Type, AircraftData> GEX::initializeAircraftData()
+	std::map<Player::Type, PlayerData> GEX::initializePlayerData()
 	{
-		std::map <Aircraft::Type, AircraftData> data;
+		std::map <Player::Type, PlayerData> data;
 
-		data[Aircraft::Type::Eagle].hitpoints = 100;
-		data[Aircraft::Type::Eagle].speed = 200.f;
-		data[Aircraft::Type::Eagle].texture = TextureID::Entities;
-		data[Aircraft::Type::Eagle].textureRect = sf::IntRect(0, 0, 48, 64);
-		data[Aircraft::Type::Eagle].fireInterval = sf::seconds(1);
-		data[Aircraft::Type::Eagle].hasRollAnimation = true;
+		data[Player::Type::Eagle].hitpoints = 100;
+		data[Player::Type::Eagle].speed = 200.f;
+		data[Player::Type::Eagle].texture = TextureID::Entities;
+		data[Player::Type::Eagle].textureRect = sf::IntRect(0, 0, 48, 64);
+		data[Player::Type::Eagle].fireInterval = sf::seconds(1);
+		data[Player::Type::Eagle].hasRollAnimation = true;
 
-		data[Aircraft::Type::Raptor].hitpoints = 20;
-		data[Aircraft::Type::Raptor].speed = 80.f;
-		data[Aircraft::Type::Raptor].texture = TextureID::Entities;
-		data[Aircraft::Type::Raptor].textureRect = sf::IntRect(144, 0, 84, 64);
-		data[Aircraft::Type::Raptor].fireInterval = sf::Time::Zero;
-		data[Aircraft::Type::Raptor].hasRollAnimation = false;
+		/*data[Player::Type::Raptor].hitpoints = 20;
+		data[Player::Type::Raptor].speed = 80.f;
+		data[Player::Type::Raptor].texture = TextureID::Entities;
+		data[Player::Type::Raptor].textureRect = sf::IntRect(144, 0, 84, 64);
+		data[Player::Type::Raptor].fireInterval = sf::Time::Zero;
+		data[Player::Type::Raptor].hasRollAnimation = false;
 
-		data[Aircraft::Type::Raptor].directions.emplace_back(Direction(45.f, 80.f));
-		data[Aircraft::Type::Raptor].directions.emplace_back(Direction(-45.f, 160.f));
-		data[Aircraft::Type::Raptor].directions.emplace_back(Direction(45.f, 80.f));
+		data[Player::Type::Raptor].directions.emplace_back(Direction(45.f, 80.f));
+		data[Player::Type::Raptor].directions.emplace_back(Direction(-45.f, 160.f));
+		data[Player::Type::Raptor].directions.emplace_back(Direction(45.f, 80.f));
 
-		data[Aircraft::Type::Avenger].hitpoints = 40;
-		data[Aircraft::Type::Avenger].speed = 50.f;
-		data[Aircraft::Type::Avenger].texture = TextureID::Entities;
-		data[Aircraft::Type::Avenger].textureRect = sf::IntRect(228, 0, 60, 59);
-		data[Aircraft::Type::Avenger].fireInterval = sf::seconds(2);
-		data[Aircraft::Type::Avenger].hasRollAnimation = false;
+		data[Player::Type::Avenger].hitpoints = 40;
+		data[Player::Type::Avenger].speed = 50.f;
+		data[Player::Type::Avenger].texture = TextureID::Entities;
+		data[Player::Type::Avenger].textureRect = sf::IntRect(228, 0, 60, 59);
+		data[Player::Type::Avenger].fireInterval = sf::seconds(2);
+		data[Player::Type::Avenger].hasRollAnimation = false;
 
-		data[Aircraft::Type::Avenger].directions.emplace_back(Direction(45.f, 50.f));
-		data[Aircraft::Type::Avenger].directions.emplace_back(Direction(0.f, 50.f));
-		data[Aircraft::Type::Avenger].directions.emplace_back(Direction(-45.f, 100.f));
-		data[Aircraft::Type::Avenger].directions.emplace_back(Direction(0.f, 50.f));
-		data[Aircraft::Type::Avenger].directions.emplace_back(Direction(45.f, 50.f));
+		data[Player::Type::Avenger].directions.emplace_back(Direction(45.f, 50.f));
+		data[Player::Type::Avenger].directions.emplace_back(Direction(0.f, 50.f));
+		data[Player::Type::Avenger].directions.emplace_back(Direction(-45.f, 100.f));
+		data[Player::Type::Avenger].directions.emplace_back(Direction(0.f, 50.f));
+		data[Player::Type::Avenger].directions.emplace_back(Direction(45.f, 50.f));*/
 
 		return data;
 	}
@@ -105,19 +105,19 @@ namespace GEX
 
 		data[Pickup::Type::HealthRefill].texture = TextureID::Entities;
 		data[Pickup::Type::HealthRefill].textureRect = sf::IntRect(0, 64, 40, 40);
-		data[Pickup::Type::HealthRefill].action = [](Aircraft& a) {a.repair(25); };
+		data[Pickup::Type::HealthRefill].action = [](Player& a) {a.repair(25); };
 
 		data[Pickup::Type::MissileRefill].texture = TextureID::Entities;
 		data[Pickup::Type::MissileRefill].textureRect = sf::IntRect(40, 64, 40, 40);
-		data[Pickup::Type::MissileRefill].action = [](Aircraft& a) {a.collectMissiles(3); };
+		data[Pickup::Type::MissileRefill].action = [](Player& a) {a.collectMissiles(3); };
 
 		data[Pickup::Type::FireSpread].texture = TextureID::Entities;
 		data[Pickup::Type::FireSpread].textureRect = sf::IntRect(80, 64, 40, 40);
-		data[Pickup::Type::FireSpread].action = [](Aircraft& a) {a.increaseFireSpread(); };
+		data[Pickup::Type::FireSpread].action = [](Player& a) {a.increaseFireSpread(); };
 
 		data[Pickup::Type::FireRate].texture = TextureID::Entities;
 		data[Pickup::Type::FireRate].textureRect = sf::IntRect(120, 64, 40, 40);
-		data[Pickup::Type::FireRate].action = [](Aircraft& a) {a.increaseFireRate(); };
+		data[Pickup::Type::FireRate].action = [](Player& a) {a.increaseFireRate(); };
 
 		return data;
 	}

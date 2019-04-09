@@ -41,7 +41,7 @@
 #include "SceneNode.h"
 #include "SpriteNode.h"
 #include "TextureManager.h"
-#include "Aircraft.h"
+#include "Player.h"
 #include "Category.h"
 #include "CommandQueue.h"
 #include "SoundPlayer.h"
@@ -132,11 +132,11 @@ namespace GEX
 		sf::FloatRect				worldBounds_;
 		sf::Vector2f				spawnPosition_;
 		float						scrollSpeed_;
-		Aircraft*					playerAircraft_;
+		Player*						player_;
 
 		std::vector<Spawnpoint>		enemySpawnPoints_;
 
-		std::vector<Aircraft*>		activeEnemies_;
+		std::vector<Player*>		activeEnemies_;
 
 		std::vector<Zombie*>		activeZombies_;
 		std::vector<Skeleton*>		activeSkeletons_;

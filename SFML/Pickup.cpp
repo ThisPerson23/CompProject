@@ -58,7 +58,7 @@ namespace GEX
 	{
 		return getWorldTransform().transformRect(sprite_.getGlobalBounds());
 	}
-	void Pickup::apply(Aircraft & player)
+	void Pickup::apply(Player & player)
 	{
 		TABLE.at(type_).action(player);
 	}

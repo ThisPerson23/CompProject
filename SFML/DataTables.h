@@ -36,7 +36,7 @@
 
 #include "ResourceIdentifiers.h"
 #include "Projectile.h"
-#include "Aircraft.h"
+#include "Player.h"
 #include "Pickup.h"
 #include "Particle.h"
 #include "Skeleton.h"
@@ -62,7 +62,7 @@ namespace GEX
 		float distance;
 	};
 
-	struct AircraftData
+	struct PlayerData
 	{
 		int								hitpoints;
 		float							speed;
@@ -101,7 +101,7 @@ namespace GEX
 
 	struct PickupData
 	{
-		std::function<void(Aircraft&)>	action;
+		std::function<void(Player&)>	action;
 		TextureID						texture;
 		sf::IntRect						textureRect;
 	};
@@ -114,7 +114,7 @@ namespace GEX
 
 	std::map<Pickup::Type, PickupData>			    initializePickupData();
 	std::map<Projectile::Type, ProjectileData>	    initializeProjectileData();
-	std::map<Aircraft::Type, AircraftData>		    initializeAircraftData();
+	std::map<Player::Type, PlayerData>				initializePlayerData();
 	std::map<Particle::Type, ParticleData>		    initializeParticleData();
 	std::map<Zombie::ZombieType, ZombieData>	    initializeZombieData();
 	std::map<Skeleton::SkeletonType, SkeletonData>	initializeSkeletonData();

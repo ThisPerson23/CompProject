@@ -33,10 +33,11 @@
 */
 
 #include "World.h"
-#include "Aircraft.h"
+#include "Player.h"
 #include "Pickup.h"
 #include "Utility.h"
 #include "Projectile.h"
+#include "SoundNode.h"
 #include "ParticleNode.h"
 
 namespace GEX
@@ -51,7 +52,7 @@ namespace GEX
 	, worldBounds_(0.f, 0.f, worldView_.getSize().x, /*5000.f*/worldView_.getSize().y)
 	, spawnPosition_(worldView_.getSize().x / 2.f, worldBounds_.height - worldView_.getSize().y / 2.f)
 	, scrollSpeed_(0.f)
-	, playerAircraft_(nullptr)
+	, player_(nullptr)
 	, scoreText_()
 	, score_()
 	, multiplierText_()
@@ -86,7 +87,7 @@ namespace GEX
 
 		// Scroll screen and reset player velocity
 		worldView_.move(0.f, scrollSpeed_ * dt.asSeconds());
-		playerAircraft_->setVelocity(0.f, 0.f);
+		player_->setVelocity(0.f, 0.f);
 
 		// Destroy all entities that leave the battlefield
 		destroyEntitiesOutOfView();
@@ -124,10 +125,10 @@ namespace GEX
 
 	void World::adaptPlayerVelocity()
 	{
-		sf::Vector2f velocity = playerAircraft_->getVelocity();
+		sf::Vector2f velocity = player_->getVelocity();
 
 		if (velocity.x != 0.f && velocity.y != 0.f)
-			playerAircraft_->setVelocity(velocity / std::sqrt(2.f));
+			player_->setVelocity(velocity / std::sqrt(2.f));
 	}
 
 	void World::adaptPlayerPosition()
@@ -135,14 +136,14 @@ namespace GEX
 		const float BORDER_DISTANCE = 40.f;
 		sf::FloatRect viewBounds(worldView_.getCenter() - worldView_.getSize() / 2.f, worldView_.getSize());
 
-		sf::Vector2f position = playerAircraft_->getPosition();
+		sf::Vector2f position = player_->getPosition();
 		position.x = std::max(position.x, viewBounds.left + BORDER_DISTANCE);
 		position.x = std::min(position.x, viewBounds.left + viewBounds.width - BORDER_DISTANCE);
 
 		position.y = std::max(position.y, viewBounds.top + BORDER_DISTANCE);
 		position.y = std::min(position.y, viewBounds.top + viewBounds.height - BORDER_DISTANCE);
 
-		playerAircraft_->setPosition(position);
+		player_->setPosition(position);
 	}
 
 	void World::adaptEnemies()
@@ -152,7 +153,7 @@ namespace GEX
 
 	void World::updateSound()
 	{
-		sounds_.setListenerPosition(playerAircraft_->getWorldPosition());
+		sounds_.setListenerPosition(player_->getWorldPosition());
 		sounds_.removeStoppedSounds();
 	}
 
@@ -245,9 +246,9 @@ namespace GEX
 	{
 		for (auto e : activeZombies_)
 		{
-			auto d = distance(*playerAircraft_, *e);
+			auto d = distance(*player_, *e);
 
-			sf::Vector2f velocityTemp = unitVector((playerAircraft_->getWorldPosition() - e->getWorldPosition()) * 10000.f);
+			sf::Vector2f velocityTemp = unitVector((player_->getWorldPosition() - e->getWorldPosition()) * 10000.f);
 
 			if (std::abs(velocityTemp.x) > std::abs(velocityTemp.y))
 			{
@@ -267,7 +268,7 @@ namespace GEX
 		// build a list of active Enemies
 		Command enemyCollector;
 		enemyCollector.category = Category::EnemyAircraft;
-		enemyCollector.action = derivedAction<Aircraft>([this](Aircraft& enemy, sf::Time dt)
+		enemyCollector.action = derivedAction<Player>([this](Player& enemy, sf::Time dt)
 		{
 			if (!enemy.isDestroyed())
 				activeEnemies_.push_back(&enemy);
@@ -282,9 +283,9 @@ namespace GEX
 				return;
 
 			float minDistance = std::numeric_limits<float>::max();
-			Aircraft* closestEnemy = nullptr;
+			Player* closestEnemy = nullptr;
 
-			for (Aircraft* e : activeEnemies_)
+			for (Player* e : activeEnemies_)
 			{
 				auto d = distance(missile, *e);
 				if (d < minDistance)
@@ -332,28 +333,28 @@ namespace GEX
 
 		for (SceneNode::Pair pair : collisionPairs)
 		{
-			if (matchesCategory(pair, Category::Type::PlayerAircraft, Category::Type::EnemyAircraft))
+			if (matchesCategory(pair, Category::Type::Player, Category::Type::EnemyAircraft))
 			{
-				auto& player = static_cast<Aircraft&>(*pair.first);
-				auto& enemy = static_cast<Aircraft&>(*pair.second);
+				auto& player = static_cast<Player&>(*pair.first);
+				auto& enemy = static_cast<Player&>(*pair.second);
 
 				player.damage(enemy.getHitpoints());
 				enemy.destroy();
 			}
-			else if (matchesCategory(pair, Category::Type::PlayerAircraft, Category::Type::Pickup))
+			else if (matchesCategory(pair, Category::Type::Player, Category::Type::Pickup))
 			{
-				auto& player = static_cast<Aircraft&>(*pair.first);
+				auto& player = static_cast<Player&>(*pair.first);
 				auto& pickup = static_cast<Pickup&>(*pair.second);
 
 				pickup.apply(player);
 				pickup.destroy();
 
-				playerAircraft_->playLocalSound(commandQueue_, SoundEffectID::CollectPickup);
+				player_->playLocalSound(commandQueue_, SoundEffectID::CollectPickup);
 			}
-			else if (matchesCategory(pair, Category::Type::PlayerAircraft, Category::Type::EnemyProjectile) ||
+			else if (matchesCategory(pair, Category::Type::Player, Category::Type::EnemyProjectile) ||
 				     matchesCategory(pair, Category::Type::EnemyAircraft, Category::Type::AlliedProjectile))
 			{
-				auto& aircraft = static_cast<Aircraft&>(*pair.first);
+				auto& aircraft = static_cast<Player&>(*pair.first);
 				auto& projectile = static_cast<Projectile&>(*pair.second);
 
 				aircraft.damage(projectile.getDamage());
@@ -367,9 +368,9 @@ namespace GEX
 				zombie.damage(projectile.getDamage());
 				projectile.destroy();
 			}
-			else if (matchesCategory(pair, Category::Type::PlayerAircraft, Category::Type::Zombie))
+			else if (matchesCategory(pair, Category::Type::Player, Category::Type::Zombie))
 			{
-				auto& player = static_cast<Aircraft&>(*pair.first);
+				auto& player = static_cast<Player&>(*pair.first);
 				auto& zombie = static_cast<Zombie&>(*pair.second);
 
 				player.damage(zombie.getDamage());
@@ -418,12 +419,12 @@ namespace GEX
 
 	bool World::hasAlivePlayer() const
 	{
-		return !playerAircraft_->isDestroyed();
+		return !player_->isDestroyed();
 	}
 
 	bool World::hasPlayerReachedEnd() const
 	{
-		return !worldBounds_.contains(playerAircraft_->getPosition());
+		return !worldBounds_.contains(player_->getPosition());
 	}
 
 	void World::loadTextures()
@@ -471,6 +472,10 @@ namespace GEX
 			sceneGraph_.attachChild(std::move(layer));
 		}
 
+		//Sound
+		std::unique_ptr<SoundNode> sNode(new SoundNode(sounds_));
+		sceneGraph_.attachChild(std::move(sNode));
+
 		// Particle System
 		std::unique_ptr<ParticleNode> smoke(new ParticleNode(Particle::Type::Smoke, textures_));
 		sceneLayers_[LowerAir]->attachChild(std::move(smoke));
@@ -489,10 +494,10 @@ namespace GEX
 
 		// add player aircraft & game objects
 			//player
-		std::unique_ptr<Aircraft> leader(new Aircraft(Aircraft::Type::Eagle, textures_));
+		std::unique_ptr<Player> leader(new Player(Player::Type::Eagle, textures_));
 		leader->setPosition(spawnPosition_);
 		/*leader->setVelocity(50.f, scrollSpeed_);*/
-		playerAircraft_ = leader.get();
+		player_ = leader.get();
 		sceneLayers_[UpperAir]->attachChild(std::move(leader));
 
 		// add enemy planes
