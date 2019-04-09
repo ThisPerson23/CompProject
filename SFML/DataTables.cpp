@@ -44,7 +44,7 @@ namespace GEX
 		data[Zombie::ZombieType::Zombie].speed = 50.f;
 		data[Zombie::ZombieType::Zombie].texture = TextureID::Zombie;
 		data[Zombie::ZombieType::Zombie].attackInterval = sf::seconds(1);
-		data[Zombie::ZombieType::Zombie].damage = 2;
+		data[Zombie::ZombieType::Zombie].damage = 1;
 		
 		return data;
 	}
@@ -65,12 +65,17 @@ namespace GEX
 	{
 		std::map <Player::Type, PlayerData> data;
 
-		data[Player::Type::Eagle].hitpoints = 100;
-		data[Player::Type::Eagle].speed = 200.f;
-		data[Player::Type::Eagle].texture = TextureID::Entities;
-		data[Player::Type::Eagle].textureRect = sf::IntRect(0, 0, 48, 64);
-		data[Player::Type::Eagle].fireInterval = sf::seconds(1);
-		data[Player::Type::Eagle].hasRollAnimation = true;
+		data[Player::Type::Player].hitpoints = 100;
+		data[Player::Type::Player].speed = 200.f;
+		data[Player::Type::Player].texture = TextureID::Entities;
+		data[Player::Type::Player].textureRect = sf::IntRect(0, 0, 48, 64);
+		data[Player::Type::Player].fireInterval = sf::seconds(1);
+		data[Player::Type::Player].hasRollAnimation = true;
+
+		data[Player::Type::Player].textureIdleUp = TextureID::PlayerIdleUp;
+		data[Player::Type::Player].textureIdleLeft = TextureID::PlayerIdleLeft;
+		data[Player::Type::Player].textureIdleDown = TextureID::PlayerIdleDown;
+		data[Player::Type::Player].textureIdleRight = TextureID::PlayerIdleRight;
 
 		/*data[Player::Type::Raptor].hitpoints = 20;
 		data[Player::Type::Raptor].speed = 80.f;
@@ -127,7 +132,7 @@ namespace GEX
 		std::map <Projectile::Type, ProjectileData> data;
 
 		data[Projectile::Type::AlliedBullet].damage = 10;
-		data[Projectile::Type::AlliedBullet].speed = 300.f;
+		data[Projectile::Type::AlliedBullet].speed = 1500.f;
 		data[Projectile::Type::AlliedBullet].texture = TextureID::Entities;
 		data[Projectile::Type::AlliedBullet].textureRect = sf::IntRect(175, 64, 3, 14);
 

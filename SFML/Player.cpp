@@ -60,6 +60,10 @@ namespace GEX
 		, walkLeft_(textures.get(TextureID::PlayerWalkLeft))
 		, walkDown_(textures.get(TextureID::PlayerWalkDown))
 		, walkRight_(textures.get(TextureID::PlayerWalkRight))
+		, idleUp_(textures.get(TextureID::PlayerIdleUp))
+		, idleLeft_(textures.get(TextureID::PlayerIdleLeft))
+		, idleDown_(textures.get(TextureID::PlayerIdleDown))
+		, idleRight_(textures.get(TextureID::PlayerIdleRight))
 		, showExplosion_(true)
 		, healthDisplay_(nullptr)
 		, missileDisplay_(nullptr)
@@ -77,8 +81,14 @@ namespace GEX
 		, dropPickupCommand_()
 		, spawnPickup_(false)
 		, hasPlayedExplosionSound_(false)
+		, state_(Player::State::IdleDown)
 	{
 		setupAnimations();
+
+		centerOrigin(idleUp_);
+		centerOrigin(idleLeft_);
+		centerOrigin(idleDown_);
+		centerOrigin(idleRight_);
 
 		//Set up Commands
 		fireCommand_.category = Category::SceneAirLayer;
@@ -118,13 +128,7 @@ namespace GEX
 
 	unsigned int Player::getCategory() const
 	{
-		switch (type_)
-		{
-		case Type::Eagle:
-			return Category::Player;
-		default:
-			return Category::EnemyAircraft;
-		}
+		return Category::Player;
 	}
 
 	void Player::updateTexts()
@@ -217,7 +221,7 @@ namespace GEX
 
 	bool Player::isAllied() const
 	{
-		return type_ == Type::Eagle;
+		return type_ == Type::Player;
 	}
 
 	void Player::playLocalSound(CommandQueue& commands, SoundEffectID effect)
@@ -236,14 +240,35 @@ namespace GEX
 		//Check if bullets or missiles are fired
 		checkProjectileLaunch(dt, commands);
 
-		if (getVelocity().x > 0)
+		/*if (getVelocity().x > 0)
 			walkRight_.update(dt);
 		else if (getVelocity().x < 0)
 			walkLeft_.update(dt);
 		else if (getVelocity().y > 0)
 			walkDown_.update(dt);
 		else if (getVelocity().y < 0)
-			walkUp_.update(dt);
+			walkUp_.update(dt);*/
+
+		updateStates(dt);
+
+		switch (state_)
+		{
+			case Player::State::WalkDown:
+				walkDown_.update(dt);
+				break;
+			case Player::State::WalkUp:
+				walkUp_.update(dt);
+				break;
+			case Player::State::WalkLeft:
+				walkLeft_.update(dt);
+				break;
+			case Player::State::WalkRight:
+				walkRight_.update(dt);
+				break;
+			default:
+				//Do Nothing
+				break;
+		}
 
 		// Entity has been destroyed: Possibly drop pickup, mark for removal
 		if (isDestroyed())
@@ -294,6 +319,67 @@ namespace GEX
 		}
 	}
 
+	void Player::updateStates(sf::Time dt)
+	{
+		//Check if player is dead
+		if (isDestroyed())
+			setState(Player::State::Dead);
+
+		//If player is not dead and is not moving, check the last state they were in and set the appropriate idle state
+		if (state_ != Player::State::Dead)
+		{ 
+			if (getVelocity().x == 0 && getVelocity().y == 0)
+			{
+				switch (state_)
+				{
+					case Player::State::WalkUp:
+						setState(Player::State::IdleUp);
+						break;
+					case Player::State::WalkRight:
+						setState(Player::State::IdleRight);
+						break;
+					case Player::State::WalkLeft:
+						setState(Player::State::IdleLeft);
+						break;
+					case Player::State::WalkDown:
+						setState(Player::State::IdleDown);
+						break;
+					default:
+						//Do Nothing
+						break;
+				}
+			}
+			//If player is moving, set the appropriate walking state
+			else
+			{
+				if (getVelocity().y != 0)
+				{
+					if (getVelocity().y < 0)
+						setState(Player::State::WalkUp);
+					else
+						setState(Player::State::WalkDown);
+				}
+				else
+				{
+					if (getVelocity().x < 0)
+						setState(Player::State::WalkLeft);
+					else
+						setState(Player::State::WalkRight);
+				}
+			}
+		}
+	}
+
+	void Player::setState(Player::State state)
+	{
+		state_ = state;
+	}
+
+	Player::State Player::getState() const
+	{
+		return state_;
+	}
+
 	float Player::getMaxSpeed() const
 	{
 		return TABLE.at(type_).speed;
@@ -301,9 +387,9 @@ namespace GEX
 
 	void Player::createBullets(SceneNode & node, const TextureManager & textures)
 	{
-		Projectile::Type type = isAllied() ? Projectile::Type::AlliedBullet : Projectile::Type::EnemyBullet;
+		Projectile::Type type = Projectile::Type::AlliedBullet;
 
-		switch (fireSpreadLevel_)
+		/*switch (fireSpreadLevel_)
 		{
 		case 1:
 			createProjectile(node, type, 0.f, 0.5f, textures);
@@ -317,15 +403,68 @@ namespace GEX
 			createProjectile(node, type, 0.f, 0.5f, textures);
 			createProjectile(node, type, +0.5f, 0.5f, textures);
 			break;
+		}*/
+
+		switch (state_)
+		{
+			case Player::State::WalkUp:
+			case Player::State::IdleUp:
+				createProjectile(node, type, 0.f, 0.5f, textures);
+				break;
+			case Player::State::WalkLeft:
+			case Player::State::IdleLeft:
+				createProjectile(node, type, 0.5f, 0.f, textures);
+				break;
+			case Player::State::WalkDown:
+			case Player::State::IdleDown:
+				createProjectile(node, type, 0.f, -0.5f, textures);
+				break;
+			case Player::State::WalkRight:
+			case Player::State::IdleRight:
+				createProjectile(node, type, -0.5f, 0.f, textures);
+				break;
+			default:
+				break;
 		}
 	}
 
 	void Player::createProjectile(SceneNode & node, Projectile::Type type, float xoffset, float yoffset, const TextureManager & textures)
 	{
 		std::unique_ptr<Projectile> projectile(new Projectile(type, textures));
+		sf::Vector2f velocity;
 
-		sf::Vector2f offset(xoffset * sprite_.getGlobalBounds().width, yoffset * sprite_.getGlobalBounds().height);
-		sf::Vector2f velocity(0, projectile->getMaxSpeed());
+		sf::Vector2f offset;/*(xoffset * sprite_.getGlobalBounds().width, yoffset * sprite_.getGlobalBounds().height);*/
+
+		switch (state_)
+		{
+			case Player::State::WalkUp:
+			case Player::State::IdleUp:
+				velocity.x = 0;
+				velocity.y = projectile->getMaxSpeed() * 1.f;
+				break;
+			case Player::State::WalkLeft:
+			case Player::State::IdleLeft:
+				velocity.x = projectile->getMaxSpeed() * 1.f;
+				velocity.y = 0;
+				projectile->setRotation(90.f);
+				break;
+			case Player::State::WalkDown:
+			case Player::State::IdleDown:
+				velocity.x = 0;
+				velocity.y = projectile->getMaxSpeed() * -1.f;
+				break;
+			case Player::State::WalkRight:
+			case Player::State::IdleRight:
+				velocity.x = projectile->getMaxSpeed() * -1.f;
+				velocity.y = 0;
+				projectile->setRotation(90.f);
+				break;
+			default:
+				//Do Nothing
+				break;
+		}
+
+		/*sf::Vector2f velocity(0, projectile->getMaxSpeed());*/
 		float sign = isAllied() ? -1.f : 1.f;
 
 		projectile->setPosition(getWorldPosition() + offset * sign);
@@ -385,7 +524,7 @@ namespace GEX
 
 	void Player::drawCurrent(sf::RenderTarget & target, sf::RenderStates states) const
 	{
-		if (isDestroyed() && showExplosion_)
+		/*if (isDestroyed() && showExplosion_)
 			target.draw(explosion_, states);
 		else if (this->getVelocity().x > 0)
 			target.draw(walkRight_, states);
@@ -396,7 +535,42 @@ namespace GEX
 		else if (this->getVelocity().y < 0)
 			target.draw(walkUp_, states);
 		else
-			target.draw(sprite_, states);
+			target.draw(sprite_, states);*/
+
+		switch (state_)
+		{
+			case Player::State::Dead:
+				target.draw(explosion_, states);
+				break;
+			case Player::State::WalkRight:
+				target.draw(walkRight_, states);
+				break;
+			case Player::State::WalkLeft:
+				target.draw(walkLeft_, states);
+				break;
+			case Player::State::WalkDown:
+				target.draw(walkDown_, states);
+				break;
+			case Player::State::WalkUp:
+				target.draw(walkUp_, states);
+				break;
+			case Player::State::IdleUp:
+				target.draw(idleUp_, states);
+				break;
+			case Player::State::IdleLeft:
+				target.draw(idleLeft_, states);
+				break;
+			case Player::State::IdleDown:
+				target.draw(idleDown_, states);
+				break;
+			case Player::State::IdleRight:
+				target.draw(idleRight_, states);
+				break;
+			default:
+				//Do Nothing
+				target.draw(sprite_, states);
+				break;
+		}
 	}
 
 	void Player::setupAnimations() 

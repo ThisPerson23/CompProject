@@ -71,6 +71,11 @@ namespace GEX
 		sf::Time						fireInterval;
 		bool							hasRollAnimation;
 
+		TextureID						textureIdleUp;
+		TextureID						textureIdleDown;
+		TextureID						textureIdleLeft;
+		TextureID						textureIdleRight;
+
 		std::vector<Direction>			directions;
 	};
 

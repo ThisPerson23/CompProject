@@ -51,9 +51,20 @@ namespace GEX
 	public:
 		enum class Type
 		{
-			Eagle,
-			Raptor,
-			Avenger
+			Player
+		};
+
+		enum class State
+		{
+			WalkUp,
+			WalkLeft,
+			WalkDown,
+			WalkRight,
+			IdleUp,
+			IdleLeft,
+			IdleDown,
+			IdleRight,
+			Dead
 		};
 
 	public:
@@ -87,6 +98,11 @@ namespace GEX
 
 		void					setupAnimations();
 
+		void					updateStates(sf::Time dt);
+
+		void					setState(Player::State state);
+		Player::State			getState() const;
+
 		void					createBullets(SceneNode& node, const TextureManager& textures);
 		void					createProjectile(SceneNode& node, Projectile::Type type, 
 												 float xoffset, float yoffset, const TextureManager& textures);
@@ -108,6 +124,11 @@ namespace GEX
 		Animation				walkLeft_;
 		Animation				walkDown_;
 		Animation				walkRight_;
+
+		sf::Sprite				idleUp_;
+		sf::Sprite				idleLeft_;
+		sf::Sprite				idleDown_;
+		sf::Sprite				idleRight_;
 
 		TextNode*				healthDisplay_;
 		TextNode*				missileDisplay_;
@@ -132,5 +153,7 @@ namespace GEX
 		bool					spawnPickup_;
 
 		bool					hasPlayedExplosionSound_;
+
+		Player::State			state_;
 	};
 }

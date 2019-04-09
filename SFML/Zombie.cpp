@@ -101,7 +101,7 @@ namespace GEX
 
 	bool Zombie::isMarkedForRemoval() const
 	{
-		return isDestroyed() && state_ == Zombie::State::Dead;
+		return isDestroyed();/* && state_ == Zombie::State::Dead;*/
 	}
 
 	void Zombie::remove()

@@ -95,9 +95,6 @@ namespace GEX
 		// Guide missiles
 		guideMissiles();
 
-		//Make enemies chase the player
-		enemiesChasePlayer();
-
 		// Run all the commands in the command queue
 		while (!commandQueue_.isEmpty())
 		{ 
@@ -121,6 +118,8 @@ namespace GEX
 		//Update sounds
 		updateSound();
 		
+		//Make enemies chase the player
+		enemiesChasePlayer();
 	}
 
 	void World::adaptPlayerVelocity()
@@ -365,8 +364,9 @@ namespace GEX
 				auto& zombie = static_cast<Zombie&>(*pair.first);
 				auto& projectile = static_cast<Projectile&>(*pair.second);
 
-				zombie.damage(projectile.getDamage());
-				projectile.destroy();
+				zombie.destroy();
+				/*zombie.damage(projectile.getDamage());*/
+				//projectile.destroy();
 			}
 			else if (matchesCategory(pair, Category::Type::Player, Category::Type::Zombie))
 			{
@@ -459,6 +459,11 @@ namespace GEX
 		textures_.load(GEX::TextureID::PlayerWalkDown, "Media/Textures/player_walk_down.png");
 		textures_.load(GEX::TextureID::PlayerWalkRight, "Media/Textures/player_walk_right.png");
 
+		textures_.load(GEX::TextureID::PlayerIdleUp, "Media/Textures/player_idle_up.png");
+		textures_.load(GEX::TextureID::PlayerIdleLeft, "Media/Textures/player_idle_left.png");
+		textures_.load(GEX::TextureID::PlayerIdleDown, "Media/Textures/player_idle_down.png");
+		textures_.load(GEX::TextureID::PlayerIdleRight, "Media/Textures/player_idle_right.png");
+
 	}
 
 	void World::buildScene()
@@ -494,7 +499,7 @@ namespace GEX
 
 		// add player aircraft & game objects
 			//player
-		std::unique_ptr<Player> leader(new Player(Player::Type::Eagle, textures_));
+		std::unique_ptr<Player> leader(new Player(Player::Type::Player, textures_));
 		leader->setPosition(spawnPosition_);
 		/*leader->setVelocity(50.f, scrollSpeed_);*/
 		player_ = leader.get();
