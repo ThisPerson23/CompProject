@@ -56,6 +56,9 @@ namespace GEX
 	, score_()
 	, multiplierText_()
 	, multiplier_()
+	, enemySpawnDelay_(sf::seconds(5))
+	, enemySpawnTimer_(sf::Time::Zero)
+	, enemySpawnClock_()
 	{
 		//Font
 		scoreText_.setFont(GEX::FontManager::getInstance().get(GEX::FontID::Main));
@@ -197,19 +200,23 @@ namespace GEX
 
 	void World::spawnEnemies()
 	{
-		int i = 0;
+		enemySpawnTimer_ += enemySpawnClock_.restart();
 
-		while (activeZombies_.size() < 4)
-		{
-			auto spawnpoint = enemySpawnPoints_[i];
-			std::unique_ptr<Zombie> enemy(new Zombie(Zombie::ZombieType::Zombie, textures_));
-			enemy->setPosition(spawnpoint.x, spawnpoint.y);
-			activeZombies_.push_back(enemy.get());
-			sceneLayers_[Ground]->attachChild(std::move(enemy));
-			i++;
+		while (enemySpawnTimer_ >= enemySpawnDelay_)
+		{ 
+			if (activeZombies_.size() < 4)
+			{
+				//TODO: Implement enemy randomizer here
+				auto spawnpoint = enemySpawnPoints_[randomInt(3)];
+				std::unique_ptr<Zombie> enemy(new Zombie(Zombie::ZombieType::Zombie, textures_));
+				enemy->setPosition(spawnpoint.x, spawnpoint.y);
+				activeZombies_.push_back(enemy.get());
+				sceneLayers_[Ground]->attachChild(std::move(enemy));
+			}
+
+			enemySpawnTimer_ -= enemySpawnDelay_;
 		}
 
-		i = 0;
 		/*while (!enemySpawnPoints_.empty() && enemySpawnPoints_.back().y > getBattlefieldBounds().top)
 		{
 			auto spawnpoint = enemySpawnPoints_.back();
@@ -360,6 +367,13 @@ namespace GEX
 				zombie.damage(projectile.getDamage());
 				projectile.destroy();
 			}
+			else if (matchesCategory(pair, Category::Type::PlayerAircraft, Category::Type::Zombie))
+			{
+				auto& player = static_cast<Aircraft&>(*pair.first);
+				auto& zombie = static_cast<Zombie&>(*pair.second);
+
+				player.damage(zombie.getDamage());
+			}
 		}
 	}
 
@@ -437,6 +451,13 @@ namespace GEX
 		textures_.load(GEX::TextureID::SkeletonWalkLeft, "Media/Textures/undeadking_walk_left.png");
 		textures_.load(GEX::TextureID::SkeletonWalkDown, "Media/Textures/undeadking_walk_down.png");
 		textures_.load(GEX::TextureID::SkeletonWalkRight, "Media/Textures/undeadking_walk_right.png");
+
+		//Player
+		textures_.load(GEX::TextureID::PlayerWalkUp, "Media/Textures/player_walk_up.png");
+		textures_.load(GEX::TextureID::PlayerWalkLeft, "Media/Textures/player_walk_left.png");
+		textures_.load(GEX::TextureID::PlayerWalkDown, "Media/Textures/player_walk_down.png");
+		textures_.load(GEX::TextureID::PlayerWalkRight, "Media/Textures/player_walk_right.png");
+
 	}
 
 	void World::buildScene()

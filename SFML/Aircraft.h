@@ -85,6 +85,8 @@ namespace GEX
 		void					updateMovementPattern(sf::Time dt);
 		float					getMaxSpeed() const;
 
+		void					setupAnimations();
+
 		void					createBullets(SceneNode& node, const TextureManager& textures);
 		void					createProjectile(SceneNode& node, Projectile::Type type, 
 												 float xoffset, float yoffset, const TextureManager& textures);
@@ -101,6 +103,11 @@ namespace GEX
 		sf::Sprite				sprite_;
 		Animation				explosion_;
 		bool					showExplosion_;
+
+		Animation				walkUp_;
+		Animation				walkLeft_;
+		Animation				walkDown_;
+		Animation				walkRight_;
 
 		TextNode*				healthDisplay_;
 		TextNode*				missileDisplay_;

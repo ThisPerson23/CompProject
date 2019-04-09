@@ -56,6 +56,10 @@ namespace GEX
 		, type_(type)
 		, sprite_(textures.get(TABLE.at(type).texture), TABLE.at(type).textureRect)
 		, explosion_(textures.get(TextureID::Explosion))
+		, walkUp_(textures.get(TextureID::PlayerWalkUp))
+		, walkLeft_(textures.get(TextureID::PlayerWalkLeft))
+		, walkDown_(textures.get(TextureID::PlayerWalkDown))
+		, walkRight_(textures.get(TextureID::PlayerWalkRight))
 		, showExplosion_(true)
 		, healthDisplay_(nullptr)
 		, missileDisplay_(nullptr)
@@ -73,12 +77,7 @@ namespace GEX
 		, dropPickupCommand_()
 		, spawnPickup_(false)
 	{
-		explosion_.setFrameSize(sf::Vector2i(256, 256));
-		explosion_.setNumFrames(16);
-		explosion_.setDuration(sf::seconds(1));
-
-		centerOrigin(explosion_);
-		centerOrigin(sprite_);
+		setupAnimations();
 
 		//Set up Commands
 		fireCommand_.category = Category::SceneAirLayer;
@@ -194,7 +193,14 @@ namespace GEX
 
 	sf::FloatRect Aircraft::getBoundingBox() const
 	{
-		return getWorldTransform().transformRect(sprite_.getGlobalBounds());
+		auto box = getWorldTransform().transformRect(sprite_.getGlobalBounds());
+
+		box.top += 12;
+		box.left += 12;
+		box.width -= 20;
+		box.height -= 20;
+
+		return box;
 	}
 
 	bool Aircraft::isMarkedForRemoval() const
@@ -229,6 +235,15 @@ namespace GEX
 		//Check if bullets or missiles are fired
 		checkProjectileLaunch(dt, commands);
 
+		if (getVelocity().x > 0)
+			walkRight_.update(dt);
+		else if (getVelocity().x < 0)
+			walkLeft_.update(dt);
+		else if (getVelocity().y > 0)
+			walkDown_.update(dt);
+		else if (getVelocity().y < 0)
+			walkUp_.update(dt);
+
 		// Entity has been destroyed: Possibly drop pickup, mark for removal
 		if (isDestroyed())
 		{
@@ -251,7 +266,7 @@ namespace GEX
 		{
 			// Update texts and roll animation
 			updateTexts();
-			updateRollAnimation();
+			/*updateRollAnimation();*/
 			updateMovementPattern(dt);
 		}
 	}
@@ -371,7 +386,54 @@ namespace GEX
 	{
 		if (isDestroyed() && showExplosion_)
 			target.draw(explosion_, states);
+		else if (this->getVelocity().x > 0)
+			target.draw(walkRight_, states);
+		else if (this->getVelocity().x < 0)
+			target.draw(walkLeft_, states);
+		else if (this->getVelocity().y > 0)
+			target.draw(walkDown_, states);
+		else if (this->getVelocity().y < 0)
+			target.draw(walkUp_, states);
 		else
 			target.draw(sprite_, states);
+	}
+
+	void Aircraft::setupAnimations() 
+	{
+		//Death
+		explosion_.setFrameSize(sf::Vector2i(256, 256));
+		explosion_.setNumFrames(16);
+		explosion_.setDuration(sf::seconds(1));
+
+		//Walk Up
+		walkUp_.setFrameSize(sf::Vector2i(27, 39));
+		walkUp_.setNumFrames(7);
+		walkUp_.setDuration(sf::seconds(1.5));
+		walkUp_.setRepeating(true);
+
+		//Walk Left
+		walkLeft_.setFrameSize(sf::Vector2i(30, 39));
+		walkLeft_.setNumFrames(7);
+		walkLeft_.setDuration(sf::seconds(1.5));
+		walkLeft_.setRepeating(true);
+
+		//Walk Down
+		walkDown_.setFrameSize(sf::Vector2i(26, 39));
+		walkDown_.setNumFrames(7);
+		walkDown_.setDuration(sf::seconds(1.5));
+		walkDown_.setRepeating(true);
+
+		//Walk Right
+		walkRight_.setFrameSize(sf::Vector2i(30, 39));
+		walkRight_.setNumFrames(7);
+		walkRight_.setDuration(sf::seconds(1.5));
+		walkRight_.setRepeating(true);
+
+		centerOrigin(explosion_);
+		centerOrigin(sprite_);
+		centerOrigin(walkUp_);
+		centerOrigin(walkLeft_);
+		centerOrigin(walkDown_);
+		centerOrigin(walkRight_);
 	}
 }

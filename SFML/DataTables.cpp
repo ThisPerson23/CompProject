@@ -44,6 +44,7 @@ namespace GEX
 		data[Zombie::ZombieType::Zombie].speed = 50.f;
 		data[Zombie::ZombieType::Zombie].texture = TextureID::Zombie;
 		data[Zombie::ZombieType::Zombie].attackInterval = sf::seconds(1);
+		data[Zombie::ZombieType::Zombie].damage = 2;
 		
 		return data;
 	}

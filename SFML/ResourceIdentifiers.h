@@ -54,7 +54,11 @@ namespace GEX
 		SkeletonWalkUp,
 		SkeletonWalkLeft,
 		SkeletonWalkDown,
-		SkeletonWalkRight
+		SkeletonWalkRight,
+		PlayerWalkUp,
+		PlayerWalkLeft,
+		PlayerWalkDown,
+		PlayerWalkRight
 	};
 
 	enum class MusicID

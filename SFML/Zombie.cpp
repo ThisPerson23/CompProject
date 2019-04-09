@@ -70,9 +70,9 @@ namespace GEX
 
 	void Zombie::drawCurrent(sf::RenderTarget & target, sf::RenderStates states) const
 	{
-		target.draw(sprite_, states);
+		/*target.draw(sprite_, states);*/
 
-		/*if (getVelocity().x > 0)
+		if (getVelocity().x > 0)
 			target.draw(walkRight_, states);
 		else if (getVelocity().x < 0)
 			target.draw(walkLeft_, states);
@@ -81,7 +81,7 @@ namespace GEX
 		else if (getVelocity().y < 0)
 			target.draw(walkUp_, states);
 		else if (getVelocity().x == 0 && getVelocity().y == 0)
-			target.draw(sprite_, states);*/
+			target.draw(sprite_, states);
 	}
 
 	unsigned int Zombie::getCategory() const
@@ -91,7 +91,12 @@ namespace GEX
 
 	sf::FloatRect Zombie::getBoundingBox() const
 	{
-		return getWorldTransform().transformRect(sprite_.getGlobalBounds());
+		auto box = getWorldTransform().transformRect(sprite_.getGlobalBounds());
+
+		box.left -= 15;
+		box.top -= 20;
+
+		return box;
 	}
 
 	bool Zombie::isMarkedForRemoval() const
@@ -103,6 +108,11 @@ namespace GEX
 	{
 		Entity::remove();
 		showDeath_ = false;
+	}
+
+	int Zombie::getDamage() const
+	{
+		return TABLE.at(type_).damage;
 	}
 
 	void Zombie::playLocalSound(CommandQueue & commands, SoundEffectID effect)
@@ -121,7 +131,18 @@ namespace GEX
 		//Update the states
 		updateStates(dt);
 
-		animations_[state_].update(dt);
+		if (getVelocity().x > 0)
+			walkRight_.update(dt);
+		else if (getVelocity().x < 0)
+			walkLeft_.update(dt);
+		else if (getVelocity().y > 0)
+			walkDown_.update(dt);
+		else if (getVelocity().y < 0)
+			walkUp_.update(dt);
+		/*else if (getVelocity().x == 0 && getVelocity().y == 0)
+			target.draw(sprite_, states);*/
+
+		//animations_[state_].update(dt);
 
 		Entity::updateCurrent(dt, commands);
 
@@ -191,24 +212,24 @@ namespace GEX
 
 	void Zombie::setupAnimations()
 	{
-		walkUp_.setFrameSize(sf::Vector2i(33, 15));
+		walkUp_.setFrameSize(sf::Vector2i(33, 45));
 		walkUp_.setNumFrames(3);
-		walkUp_.setDuration(sf::seconds(2));
+		walkUp_.setDuration(sf::seconds(0.5));
 		walkUp_.setRepeating(true);
 
-		walkLeft_.setFrameSize(sf::Vector2i(33, 15));
+		walkLeft_.setFrameSize(sf::Vector2i(33, 45));
 		walkLeft_.setNumFrames(3);
-		walkLeft_.setDuration(sf::seconds(2));
+		walkLeft_.setDuration(sf::seconds(0.5));
 		walkLeft_.setRepeating(true);
 
-		walkDown_.setFrameSize(sf::Vector2i(33, 15));
+		walkDown_.setFrameSize(sf::Vector2i(33, 45));
 		walkDown_.setNumFrames(3);
-		walkDown_.setDuration(sf::seconds(2));
+		walkDown_.setDuration(sf::seconds(0.5));
 		walkDown_.setRepeating(true);
 
-		walkRight_.setFrameSize(sf::Vector2i(33, 15));
+		walkRight_.setFrameSize(sf::Vector2i(33, 45));
 		walkRight_.setNumFrames(3);
-		walkRight_.setDuration(sf::seconds(2));
+		walkRight_.setDuration(sf::seconds(0.5));
 		walkRight_.setRepeating(true);
 
 		animations_[Zombie::State::Up] = walkUp_;

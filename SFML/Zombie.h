@@ -73,6 +73,7 @@ namespace GEX
 		void					playLocalSound(CommandQueue& commands, SoundEffectID effect);
 
 		float					getMaxSpeed() const;
+		int						getDamage() const;
 
 	protected:
 		void					updateCurrent(sf::Time dt, CommandQueue& commands) override;

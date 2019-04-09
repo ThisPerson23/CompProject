@@ -145,5 +145,9 @@ namespace GEX
 		sf::Text					multiplierText_;
 		int							multiplier_;
 		int							score_;
+
+		sf::Time					enemySpawnDelay_;
+		sf::Time					enemySpawnTimer_;
+		sf::Clock					enemySpawnClock_;
 	};
 }

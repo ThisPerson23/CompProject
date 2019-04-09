@@ -80,6 +80,7 @@ namespace GEX
 		float							speed;
 		TextureID						texture;
 		sf::Time						attackInterval;
+		int								damage;
 	};
 
 	struct SkeletonData
