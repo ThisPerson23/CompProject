@@ -247,7 +247,7 @@ namespace GEX
 		enemySpawnTimer_ += enemySpawnClock_.restart();
 
 		while (enemySpawnTimer_ >= enemySpawnDelay_)
-		{ 
+		{
 			if (activeZombies_.size() < 25)
 			{
 				//TODO: Implement enemy randomizer here

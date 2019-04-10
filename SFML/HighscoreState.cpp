@@ -6,7 +6,7 @@
 *
 *
 * @section DESCRIPTION
-* MenuState Class
+* HighscoreState Class
 *
 *
 *
@@ -32,32 +32,32 @@
 * NBCC Academic Integrity Policy (policy 1111)
 */
 
-#pragma once
+#include "HighscoreState.h"
 
-#include "State.h"
-#include "CommandQueue.h"
-
-class MenuState : public GEX::State
+HighscoreState::HighscoreState(GEX::StateStack& stateStack, Context context)
+	: State(stateStack, context)
 {
-public:
-	MenuState(GEX::StateStack& stateStack, Context context);
-	~MenuState();
+	context.music_->play(GEX::MusicID::MenuTheme);
+	context.music_->setVolume(100.f);
+}
 
-	void					draw() override;
-	bool					update(sf::Time dt) override;
-	bool					handleEvent(const sf::Event& event) override;
+HighscoreState::~HighscoreState()
+{
+}
 
-	void					updateOptionText();
+void HighscoreState::draw()
+{
+}
 
-private:
-	enum OptionNames
-	{
-		Play = 0,
-		Exit
-	};
+bool HighscoreState::update(sf::Time dt)
+{
+	return false;
+}
 
-	sf::Sprite				backgroundSprite_;
-	std::vector<sf::Text>	options_;
-	std::size_t				optionsIndex_;
-};
+bool HighscoreState::handleEvent(const sf::Event & event)
+{
+	return false;
+}
+
+
 

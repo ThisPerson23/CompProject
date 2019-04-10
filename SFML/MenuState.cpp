@@ -70,6 +70,11 @@ MenuState::MenuState(GEX::StateStack& stateStack, Context context)
 	context.music_->setVolume(100.f);
 }
 
+MenuState::~MenuState()
+{
+	getContext().music_->setPaused(true);
+}
+
 void MenuState::draw()
 {
 	//sf::RenderWindow& window = *getContext().window;

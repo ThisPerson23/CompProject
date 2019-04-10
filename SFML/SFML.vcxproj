@@ -137,6 +137,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="HighscoreState.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Animation.cpp" />
     <ClCompile Include="Application.cpp" />
@@ -177,6 +178,7 @@
     <ClCompile Include="Zombie.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="HighscoreState.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="Animation.h" />
     <ClInclude Include="Application.h" />

@@ -44,6 +44,7 @@ namespace GEX
 		Pause,
 		GEXScreen,
 		GameOver,
+		Highscore,
 		None
 	};
 }

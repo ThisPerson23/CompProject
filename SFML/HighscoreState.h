@@ -6,7 +6,7 @@
 *
 *
 * @section DESCRIPTION
-* MenuState Class
+* HighscoreState Class
 *
 *
 *
@@ -35,29 +35,18 @@
 #pragma once
 
 #include "State.h"
-#include "CommandQueue.h"
 
-class MenuState : public GEX::State
+class HighscoreState : public GEX::State
 {
-public:
-	MenuState(GEX::StateStack& stateStack, Context context);
-	~MenuState();
+	public:
+		HighscoreState(GEX::StateStack& stateStack, Context context);
+		~HighscoreState();
 
-	void					draw() override;
-	bool					update(sf::Time dt) override;
-	bool					handleEvent(const sf::Event& event) override;
+		void					draw() override;
+		bool					update(sf::Time dt);
+		bool					handleEvent(const sf::Event& event) override;
 
-	void					updateOptionText();
-
-private:
-	enum OptionNames
-	{
-		Play = 0,
-		Exit
-	};
-
-	sf::Sprite				backgroundSprite_;
-	std::vector<sf::Text>	options_;
-	std::size_t				optionsIndex_;
+	private:
+		//sf::Text
 };
 
