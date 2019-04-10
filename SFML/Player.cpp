@@ -271,7 +271,7 @@ namespace GEX
 		}
 
 		// Entity has been destroyed: Possibly drop pickup, mark for removal
-		if (isDestroyed())
+		/*if (isDestroyed())
 		{
 			checkPickupDrop(commands);
 			explosion_.update(dt);
@@ -284,13 +284,13 @@ namespace GEX
 			}
 
 			return;
-		}
+		}*/
 
 		Entity::updateCurrent(dt, commands);
 
 		if (!isDestroyed())
 		{
-			// Update texts and roll animation
+			// Update texts
 			updateTexts();
 			/*updateRollAnimation();*/
 			updateMovementPattern(dt);

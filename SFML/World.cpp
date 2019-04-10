@@ -211,12 +211,12 @@ namespace GEX
 		enemySpawnPoints_.push_back(spawnpoint);*/
 	}
 
-	//Play a random zombie groan noise for atmosphere
+	//Play a random zombie groan noise for atmosphere every 15 secomds
 	void World::playZombieGroan()
 	{
 		zombieGroanTimer_ += zombieGroanClock_.restart();
 
-		if (zombieGroanTimer_ >= sf::seconds(10))
+		if (zombieGroanTimer_ >= sf::seconds(15))
 		{
 			SoundEffectID sound;
 
@@ -238,7 +238,7 @@ namespace GEX
 			}
 
 			player_->playLocalSound(commandQueue_, sound);
-			zombieGroanTimer_ -= sf::seconds(10);
+			zombieGroanTimer_ -= sf::seconds(15);
 		}
 	}
 
@@ -260,16 +260,6 @@ namespace GEX
 
 			enemySpawnTimer_ -= enemySpawnDelay_;
 		}
-
-		/*while (!enemySpawnPoints_.empty() && enemySpawnPoints_.back().y > getBattlefieldBounds().top)
-		{
-			auto spawnpoint = enemySpawnPoints_.back();
-			std::unique_ptr<Aircraft> enemy(new Aircraft(spawnpoint.type, textures_));
-			enemy->setPosition(spawnpoint.x, spawnpoint.y);
-			enemy->setRotation(180);
-			sceneLayers_[UpperAir]->attachChild(std::move(enemy));
-			enemySpawnPoints_.pop_back();
-		}*/
 	}
 
 	sf::FloatRect World::getViewBounds() const
@@ -289,20 +279,25 @@ namespace GEX
 	{
 		for (auto e : activeZombies_)
 		{
-			auto d = distance(*player_, *e);
-
-			sf::Vector2f velocityTemp = unitVector((player_->getWorldPosition() - e->getWorldPosition()) * 10000.f);
-
-			if (std::abs(velocityTemp.x) > std::abs(velocityTemp.y))
+			if (e->getType() == Zombie::ZombieType::Zombie && e->getState() != Zombie::State::Dead)
 			{
-				velocityTemp.y = 0;
-			}
-			else
-			{
-				velocityTemp.x = 0;
-			}
+				auto d = distance(*player_, *e);
 
-			e->setVelocity(velocityTemp * e->getMaxSpeed());
+				sf::Vector2f velocityTemp = unitVector((player_->getWorldPosition() - e->getWorldPosition()) * 10000.f);
+
+				if (std::abs(velocityTemp.x) > std::abs(velocityTemp.y))
+				{
+					velocityTemp.y = 0;
+				}
+				else
+				{
+					velocityTemp.x = 0;
+				}
+
+				e->setVelocity(velocityTemp * e->getMaxSpeed());
+			}
+			else if (e->getType() == Zombie::ZombieType::Zombie && e->getState() == Zombie::State::Dead)
+				e->setVelocity(0.f, 0.f);
 		}
 	}
 
@@ -401,14 +396,18 @@ namespace GEX
 				auto& zombie = static_cast<Zombie&>(*pair.first);
 				auto& projectile = static_cast<Projectile&>(*pair.second);
 
-				if (multiplier_ != 0)
-					score_ += 200 * multiplier_;
-				else
-					score_ += 200;
+ 				zombie.damage(projectile.getDamage());
 
-				/*zombie.damage(projectile.getDamage());
-				zombie.destroy();
-				projectile.destroy();*/
+				//If zombie is killed, update score
+				if (zombie.getHitpoints() <= 0)
+				{
+					if (multiplier_ != 0)
+						score_ += 200 * multiplier_;
+					else
+						score_ += 200;
+				}
+
+				projectile.destroy();
 			}
 			//Zombie and Zombie
 			else if (matchesCategory(pair, Category::Type::Zombie, Category::Type::Zombie))
@@ -416,7 +415,9 @@ namespace GEX
 				auto& zombie = static_cast<Zombie&>(*pair.first);
 				auto& zombie2 = static_cast<Zombie&>(*pair.second);
 
-				zombie.setPosition(zombie.getPosition().x + 10.f, zombie.getPosition().y);
+				//Just move zombie a bit for now
+				//TODO: Find a better way to handle this
+				zombie.setPosition(zombie.getPosition().x + 10.f, zombie.getPosition().y + 10.f);
 			}
 		}
 	}
@@ -473,10 +474,10 @@ namespace GEX
 	void World::loadTextures()
 	{
 		textures_.load(GEX::TextureID::Entities, "Media/Textures/Entities.png");
-		textures_.load(GEX::TextureID::Jungle, "Media/Textures/JungleBig.png");
+		//textures_.load(GEX::TextureID::Jungle, "Media/Textures/JungleBig.png");
 		textures_.load(GEX::TextureID::Particle, "Media/Textures/Particle.png");
 		textures_.load(GEX::TextureID::Explosion, "Media/Textures/Explosion.png");
-		textures_.load(GEX::TextureID::FinishLine, "Media/Textures/FinishLine.png");
+		//textures_.load(GEX::TextureID::FinishLine, "Media/Textures/FinishLine.png");
 		textures_.load(GEX::TextureID::LunarBackground, "Media/Textures/lunar_background.png");
 
 		//Zombie and Skeleton

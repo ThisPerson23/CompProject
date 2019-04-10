@@ -70,6 +70,9 @@ namespace GEX
 
 		void					remove() override;
 
+		Zombie::ZombieType		getType() const;
+		Zombie::State			getState() const;
+
 		void					playLocalSound(CommandQueue& commands, SoundEffectID effect);
 
 		float					getMaxSpeed() const;
@@ -83,7 +86,6 @@ namespace GEX
 		void					updateStates(sf::Time dt);
 
 		void					setState(Zombie::State state);
-		Zombie::State			getState() const;
 
 		void					createPickup(SceneNode& node, const TextureManager& textures) const;
 		void					checkPickupDrop(CommandQueue& commands);

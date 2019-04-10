@@ -73,7 +73,7 @@ namespace GEX
 	{
 		/*target.draw(sprite_, states);*/
 
-		if (getVelocity().x > 0)
+		/*if (getVelocity().x > 0)
 			target.draw(walkRight_, states);
 		else if (getVelocity().x < 0)
 			target.draw(walkLeft_, states);
@@ -82,7 +82,29 @@ namespace GEX
 		else if (getVelocity().y < 0)
 			target.draw(walkUp_, states);
 		else if (getVelocity().x == 0 && getVelocity().y == 0)
-			target.draw(sprite_, states);
+			target.draw(sprite_, states);*/
+
+		switch (state_)
+		{
+		case Zombie::State::Up:
+			target.draw(walkUp_, states);
+			break;
+		case Zombie::State::Left:
+			target.draw(walkLeft_, states);
+			break;
+		case Zombie::State::Down:
+			target.draw(walkDown_, states);
+			break;
+		case Zombie::State::Right:
+			target.draw(walkRight_, states);
+			break;
+		case Zombie::State::Dead:
+			target.draw(death_, states);
+			break;
+		default:
+			//Do Nothing
+			break;
+		}
 	}
 
 	unsigned int Zombie::getCategory() const
@@ -102,13 +124,18 @@ namespace GEX
 
 	bool Zombie::isMarkedForRemoval() const
 	{
-		return isDestroyed();/* && state_ == Zombie::State::Dead;*/
+		return isDestroyed() && death_.isFinished();/* && state_ == Zombie::State::Dead;*/
 	}
 
 	void Zombie::remove()
 	{
 		Entity::remove();
 		showDeath_ = false;
+	}
+
+	Zombie::ZombieType Zombie::getType() const
+	{
+		return type_;
 	}
 
 	int Zombie::getDamage() const
@@ -132,25 +159,42 @@ namespace GEX
 		//Update the states
 		updateStates(dt);
 
-		if (getVelocity().x > 0)
+		/*if (getVelocity().x > 0)
 			walkRight_.update(dt);
 		else if (getVelocity().x < 0)
 			walkLeft_.update(dt);
 		else if (getVelocity().y > 0)
 			walkDown_.update(dt);
 		else if (getVelocity().y < 0)
-			walkUp_.update(dt);
-		/*else if (getVelocity().x == 0 && getVelocity().y == 0)
-			target.draw(sprite_, states);*/
+			walkUp_.update(dt);*/
 
-		//animations_[state_].update(dt);
+		switch (state_)
+		{
+			case Zombie::State::Up:
+				walkUp_.update(dt);
+				break;
+			case Zombie::State::Left:
+				walkLeft_.update(dt);
+				break;
+			case Zombie::State::Down:
+				walkDown_.update(dt);
+				break;
+			case Zombie::State::Right:
+				walkRight_.update(dt);
+				break;
+			case Zombie::State::Dead:
+				death_.update(dt);
+			default:
+				//Do Nothing
+				break;
+		}
 
 		Entity::updateCurrent(dt, commands);
 
 		if (isDestroyed() && state_ == Zombie::State::Dead)
 		{
-			//Start death animation
-			//death_.update(dt);
+			//start death animation
+			death_.update(dt);
 
 			//Play Death Sound
 			/*if (!hasPlayedDeathSound_)

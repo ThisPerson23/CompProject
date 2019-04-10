@@ -131,7 +131,7 @@ namespace GEX
 	{
 		std::map <Projectile::Type, ProjectileData> data;
 
-		data[Projectile::Type::AlliedBullet].damage = 10;
+		data[Projectile::Type::AlliedBullet].damage = 50;
 		data[Projectile::Type::AlliedBullet].speed = 1500.f;
 		data[Projectile::Type::AlliedBullet].texture = TextureID::Entities;
 		data[Projectile::Type::AlliedBullet].textureRect = sf::IntRect(175, 64, 3, 14);
