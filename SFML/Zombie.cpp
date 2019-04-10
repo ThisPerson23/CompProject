@@ -204,10 +204,20 @@ namespace GEX
 
 	void Zombie::createPickup(SceneNode & node, const TextureManager & textures) const
 	{
+		auto type = static_cast<Pickup::Type>(randomInt(static_cast<int>(Pickup::Type::Count)));
+
+		std::unique_ptr<Pickup> pickup(new Pickup(type, textures));
+		pickup->setPosition(getWorldPosition());
+		pickup->setVelocity(0.f, 0.f);
+		node.attachChild(std::move(pickup));
 	}
 
 	void Zombie::checkPickupDrop(CommandQueue & commands)
 	{
+		if (randomInt(3) == 0 && !spawnPickup_)
+			commands.push(dropPickupCommand_);
+
+		spawnPickup_ = true;
 	}
 
 	void Zombie::setupAnimations()

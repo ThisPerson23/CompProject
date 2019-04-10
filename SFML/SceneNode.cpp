@@ -96,7 +96,7 @@ namespace GEX
 
 	void SceneNode::drawBoundingBox(sf::RenderTarget & target, sf::RenderStates states) const
 	{
-		sf::FloatRect rect = getBoundingBox();
+		/*sf::FloatRect rect = getBoundingBox();
 
 		sf::RectangleShape box;
 		box.setPosition(sf::Vector2f(rect.left, rect.top));
@@ -105,7 +105,7 @@ namespace GEX
 		box.setOutlineColor(sf::Color::Cyan);
 		box.setOutlineThickness(1.f);
 
-		target.draw(box);
+		target.draw(box);*/
 	}
 
 	bool SceneNode::isDestroyed() const

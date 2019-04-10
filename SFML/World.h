@@ -91,6 +91,8 @@ namespace GEX
 
 		void						adaptEnemies();
 
+		void						updateScoreAndMultiplier();
+
 		void						addEnemies();
 		void						addEnemy(Spawnpoint spawn);
 		void						spawnEnemies();
@@ -102,6 +104,8 @@ namespace GEX
 
 		void						guideMissiles();		
 		void						handleCollision();
+
+		void						playZombieGroan();
 
 		void						setupSpawnPoints();	
 
@@ -136,7 +140,7 @@ namespace GEX
 
 		std::vector<Spawnpoint>		enemySpawnPoints_;
 
-		std::vector<Player*>		activeEnemies_;
+		std::vector<Entity*>		activeEnemies_;
 
 		std::vector<Zombie*>		activeZombies_;
 		std::vector<Skeleton*>		activeSkeletons_;
@@ -149,5 +153,8 @@ namespace GEX
 		sf::Time					enemySpawnDelay_;
 		sf::Time					enemySpawnTimer_;
 		sf::Clock					enemySpawnClock_;
+
+		sf::Time					zombieGroanTimer_;
+		sf::Clock					zombieGroanClock_;
 	};
 }

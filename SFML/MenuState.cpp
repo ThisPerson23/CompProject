@@ -50,7 +50,7 @@ MenuState::MenuState(GEX::StateStack& stateStack, Context context)
 
 	// play option
 	sf::Text playOption;
-	playOption.setFont(GEX::FontManager::getInstance().get(GEX::FontID::Main));
+	playOption.setFont(GEX::FontManager::getInstance().get(GEX::FontID::Spooky));
 	playOption.setString("Play");
 	GEX::centerOrigin(playOption);
 	playOption.setPosition(context.window->getView().getSize() / 2.f);
@@ -58,7 +58,7 @@ MenuState::MenuState(GEX::StateStack& stateStack, Context context)
 
 	// exit option
 	sf::Text exitOption;
-	exitOption.setFont(GEX::FontManager::getInstance().get(GEX::FontID::Main));
+	exitOption.setFont(GEX::FontManager::getInstance().get(GEX::FontID::Spooky));
 	exitOption.setString("Exit");
 	GEX::centerOrigin(exitOption);
 	exitOption.setPosition(playOption.getPosition() + sf::Vector2f(0.f, 30.f));

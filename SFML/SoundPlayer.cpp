@@ -51,10 +51,12 @@ namespace GEX
 	SoundPlayer::SoundPlayer()
 		: soundBuffers_()
 		, sounds_()
-		, volume_(100)
+		, volume_(20)
 	{
-		loadBuffer(SoundEffectID::AlliedGunfire, "Media/Sound/AlliedGunfire.wav");
-		loadBuffer(SoundEffectID::EnemyGunfire, "Media/Sound/EnemyGunfire.wav");
+		loadBuffer(SoundEffectID::PistolShot, "Media/Sound/PistolShot.wav");
+		loadBuffer(SoundEffectID::ZombieGroan1, "Media/Sound/ZombieGroan.ogg");
+		loadBuffer(SoundEffectID::ZombieGroan2, "Media/Sound/ZombieGroan2.wav");
+		loadBuffer(SoundEffectID::ZombieGroan3, "Media/Sound/ZombieGroan3.wav");
 		loadBuffer(SoundEffectID::Explosion1, "Media/Sound/Explosion1.wav");
 		loadBuffer(SoundEffectID::Explosion2, "Media/Sound/Explosion2.wav");
 		loadBuffer(SoundEffectID::LaunchMissile, "Media/Sound/LaunchMissile.wav");

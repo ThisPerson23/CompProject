@@ -41,7 +41,7 @@
 
 TextNode::TextNode(const std::string & text)
 {
-	text_.setFont(GEX::FontManager::getInstance().get(GEX::FontID::Main));
+	text_.setFont(GEX::FontManager::getInstance().get(GEX::FontID::Spooky));
 	text_.setCharacterSize(20);
 	setString(text);
 }

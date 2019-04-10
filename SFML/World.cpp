@@ -62,12 +62,12 @@ namespace GEX
 	, enemySpawnClock_()
 	{
 		//Font
-		scoreText_.setFont(GEX::FontManager::getInstance().get(GEX::FontID::Main));
+		scoreText_.setFont(GEX::FontManager::getInstance().get(GEX::FontID::Spooky));
 		scoreText_.setPosition(worldView_.getSize().x / 2.f - 50.f, 20.f);
 		scoreText_.setCharacterSize(25);
-		scoreText_.setString("Score = " + std::to_string(score_));
+		scoreText_.setString("Score " + std::to_string(score_));
 
-		multiplierText_.setFont(GEX::FontManager::getInstance().get(GEX::FontID::Main));
+		multiplierText_.setFont(GEX::FontManager::getInstance().get(GEX::FontID::Spooky));
 		multiplierText_.setPosition(worldView_.getSize().x / 2.f - 50.f, 40.f);
 		multiplierText_.setCharacterSize(25);
 		multiplierText_.setString("X" + std::to_string(multiplier_));
@@ -117,9 +117,22 @@ namespace GEX
 
 		//Update sounds
 		updateSound();
+
+		//Update score and multiplier texts
+		updateScoreAndMultiplier();
 		
 		//Make enemies chase the player
 		enemiesChasePlayer();
+
+		//Play a zombie groan at regular intervals
+		playZombieGroan();
+	}
+
+	//Update score and multiplier labels
+	void World::updateScoreAndMultiplier()
+	{
+		scoreText_.setString("Score " + std::to_string(score_));
+		multiplierText_.setString("X" + std::to_string(multiplier_));
 	}
 
 	void World::adaptPlayerVelocity()
@@ -198,13 +211,44 @@ namespace GEX
 		enemySpawnPoints_.push_back(spawnpoint);*/
 	}
 
+	//Play a random zombie groan noise for atmosphere
+	void World::playZombieGroan()
+	{
+		zombieGroanTimer_ += zombieGroanClock_.restart();
+
+		if (zombieGroanTimer_ >= sf::seconds(10))
+		{
+			SoundEffectID sound;
+
+			//Randomize groan noise
+			switch (randomInt(3))
+			{ 
+				case 0:
+					sound = SoundEffectID::ZombieGroan1;
+					break;
+				case 1:
+					sound = SoundEffectID::ZombieGroan2;
+					break;
+				case 2:
+					sound = SoundEffectID::ZombieGroan3;
+					break;
+				default:
+					//Do Nothing
+					break;
+			}
+
+			player_->playLocalSound(commandQueue_, sound);
+			zombieGroanTimer_ -= sf::seconds(10);
+		}
+	}
+
 	void World::spawnEnemies()
 	{
 		enemySpawnTimer_ += enemySpawnClock_.restart();
 
 		while (enemySpawnTimer_ >= enemySpawnDelay_)
 		{ 
-			if (activeZombies_.size() < 4)
+			if (activeZombies_.size() < 10)
 			{
 				//TODO: Implement enemy randomizer here
 				auto spawnpoint = enemySpawnPoints_[randomInt(3)];
@@ -264,43 +308,43 @@ namespace GEX
 
 	void World::guideMissiles()
 	{
-		// build a list of active Enemies
-		Command enemyCollector;
-		enemyCollector.category = Category::EnemyAircraft;
-		enemyCollector.action = derivedAction<Player>([this](Player& enemy, sf::Time dt)
-		{
-			if (!enemy.isDestroyed())
-				activeEnemies_.push_back(&enemy);
-		});
+		//// build a list of active Enemies
+		//Command enemyCollector;
+		//enemyCollector.category = Category::EnemyAircraft;
+		//enemyCollector.action = derivedAction<Player>([this](Player& enemy, sf::Time dt)
+		//{
+		//	if (!enemy.isDestroyed())
+		//		activeEnemies_.push_back(&enemy);
+		//});
 
-		Command missileGuider;
-		missileGuider.category = Category::Type::AlliedProjectile;
-		missileGuider.action = derivedAction<Projectile>([this](Projectile& missile, sf::Time dt)
-		{
-			//ignore bullets
-			if (!missile.isGuided())
-				return;
+		//Command missileGuider;
+		//missileGuider.category = Category::Type::AlliedProjectile;
+		//missileGuider.action = derivedAction<Projectile>([this](Projectile& missile, sf::Time dt)
+		//{
+		//	//ignore bullets
+		//	if (!missile.isGuided())
+		//		return;
 
-			float minDistance = std::numeric_limits<float>::max();
-			Player* closestEnemy = nullptr;
+		//	float minDistance = std::numeric_limits<float>::max();
+		//	Player* closestEnemy = nullptr;
 
-			for (Player* e : activeEnemies_)
-			{
-				auto d = distance(missile, *e);
-				if (d < minDistance)
-				{
-					minDistance = d;
-					closestEnemy = e;
-				}
-			}
+		//	for (Player* e : activeEnemies_)
+		//	{
+		//		auto d = distance(missile, *e);
+		//		if (d < minDistance)
+		//		{
+		//			minDistance = d;
+		//			closestEnemy = e;
+		//		}
+		//	}
 
-			if (closestEnemy)
-				missile.guidedTowards(closestEnemy->getWorldPosition());
-		});
+		//	if (closestEnemy)
+		//		missile.guidedTowards(closestEnemy->getWorldPosition());
+		//});
 
-		commandQueue_.push(enemyCollector);
-		commandQueue_.push(missileGuider);
-		activeEnemies_.clear();
+		//commandQueue_.push(enemyCollector);
+		//commandQueue_.push(missileGuider);
+		//activeEnemies_.clear();
 	}
 
 	bool matchesCategory(SceneNode::Pair& colliders, Category::Type type1, Category::Type type2)
@@ -332,13 +376,12 @@ namespace GEX
 
 		for (SceneNode::Pair pair : collisionPairs)
 		{
-			if (matchesCategory(pair, Category::Type::Player, Category::Type::EnemyAircraft))
+			if (matchesCategory(pair, Category::Type::Player, Category::Type::Zombie))
 			{
 				auto& player = static_cast<Player&>(*pair.first);
-				auto& enemy = static_cast<Player&>(*pair.second);
+				auto& zombie = static_cast<Zombie&>(*pair.second);
 
-				player.damage(enemy.getHitpoints());
-				enemy.destroy();
+				player.damage(zombie.getDamage());
 			}
 			else if (matchesCategory(pair, Category::Type::Player, Category::Type::Pickup))
 			{
@@ -350,31 +393,29 @@ namespace GEX
 
 				player_->playLocalSound(commandQueue_, SoundEffectID::CollectPickup);
 			}
-			else if (matchesCategory(pair, Category::Type::Player, Category::Type::EnemyProjectile) ||
-				     matchesCategory(pair, Category::Type::EnemyAircraft, Category::Type::AlliedProjectile))
-			{
-				auto& aircraft = static_cast<Player&>(*pair.first);
-				auto& projectile = static_cast<Projectile&>(*pair.second);
-
-				aircraft.damage(projectile.getDamage());
-				projectile.destroy();
-			}
-			else if (matchesCategory(pair, Category::Type::AlliedProjectile, Category::Type::Zombie))
+			else if (matchesCategory(pair, Category::Type::Zombie, Category::Type::AlliedProjectile))
 			{
 				auto& zombie = static_cast<Zombie&>(*pair.first);
 				auto& projectile = static_cast<Projectile&>(*pair.second);
 
-				zombie.destroy();
-				/*zombie.damage(projectile.getDamage());*/
-				//projectile.destroy();
-			}
-			else if (matchesCategory(pair, Category::Type::Player, Category::Type::Zombie))
-			{
-				auto& player = static_cast<Player&>(*pair.first);
-				auto& zombie = static_cast<Zombie&>(*pair.second);
+				if (multiplier_ != 0)
+					score_ += 200 * multiplier_;
+				else
+					score_ += 200;
 
-				player.damage(zombie.getDamage());
+				/*zombie.damage(projectile.getDamage());
+				zombie.destroy();
+				projectile.destroy();*/
 			}
+			//else if (matchesCategory(pair, Category::Type::AlliedProjectile, Category::Type::Zombie))
+			//{
+			//	auto& zombie = static_cast<Zombie&>(*pair.first);
+			//	auto& projectile = static_cast<Projectile&>(*pair.second);
+
+			//	zombie.destroy();
+			//	/*zombie.damage(projectile.getDamage());*/
+			//	/*projectile.destroy();*/
+			//}
 		}
 	}
 

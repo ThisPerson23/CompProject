@@ -500,7 +500,7 @@ namespace GEX
 		if (isFiring_ && fireCountDown_ <= sf::Time::Zero)
 		{
 			commands.push(fireCommand_);
-			playLocalSound(commands, isAllied() ? SoundEffectID::AlliedGunfire : SoundEffectID::EnemyGunfire);
+			playLocalSound(commands, SoundEffectID::PistolShot);
 			isFiring_ = false;
 			fireCountDown_ = TABLE.at(type_).fireInterval / (fireRateLevel_ + 1.f);
 		}

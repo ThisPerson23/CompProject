@@ -40,10 +40,10 @@ namespace GEX
 	MusicPlayer::MusicPlayer()
 		: music_()
 		, filenames_()
-		, volume_(2.f)
+		, volume_(10.f)
 	{
-		filenames_[MusicID::MissionTheme] = "Media/Music/MissionTheme.ogg";
-		filenames_[MusicID::MenuTheme] = "Media/Music/MenuTheme.ogg";
+		filenames_[MusicID::GameTheme] = "Media/Music/ZombieGameTheme.ogg";
+		filenames_[MusicID::MenuTheme] = "Media/Music/ZombieMenuTheme.wav";
 	}
 
 	void MusicPlayer::play(MusicID theme)

@@ -49,7 +49,7 @@ GameOverState::GameOverState(GEX::StateStack& stateStack, Context context)
 	gameOverText_.setFont(font);
 
 	if (context.player->getCurrentMissionStatus() == GEX::MissionStatus::MissionFailure)
-		gameOverText_.setString("Mission Failed");
+		gameOverText_.setString("You Died!");
 	else
 		gameOverText_.setString("Mission Accomplished");
 

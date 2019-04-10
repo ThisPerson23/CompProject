@@ -58,8 +58,9 @@ Application::Application()
 	window_.setKeyRepeatEnabled(false);
 
 	GEX::FontManager::getInstance().load(GEX::FontID::Main, "Media/Sansation.ttf");
+	GEX::FontManager::getInstance().load(GEX::FontID::Spooky, "Media/28_Days_Later.ttf");
 
-	textures_.load(GEX::TextureID::TitleScreen, "Media/Menus/TitleScreenBig.png");
+	textures_.load(GEX::TextureID::TitleScreen, "Media/Menus/MainMenu.jpg");
 	textures_.load(GEX::TextureID::GEXStateFace, "Media/face.png");
 
 	statisticsText_.setFont(GEX::FontManager::getInstance().get(GEX::FontID::Main));

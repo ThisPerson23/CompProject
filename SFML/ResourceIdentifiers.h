@@ -68,13 +68,15 @@ namespace GEX
 	enum class MusicID
 	{
 		MenuTheme,
-		MissionTheme
+		GameTheme
 	};
 
 	enum class SoundEffectID
 	{
-		AlliedGunfire,
-		EnemyGunfire,
+		PistolShot,
+		ZombieGroan1,
+		ZombieGroan2,
+		ZombieGroan3,
 		Explosion1,
 		Explosion2,
 		LaunchMissile,
@@ -82,6 +84,7 @@ namespace GEX
 	};
 
 	enum class FontID {
-		Main
+		Main,
+		Spooky
 	};
 }

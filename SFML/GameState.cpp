@@ -40,7 +40,7 @@ GameState::GameState(GEX::StateStack& stateStack, Context context)
 	, world_(*context.window, *context.sound_)
 	, player_(*context.player)
 {
-	context.music_->play(GEX::MusicID::MissionTheme);
+	context.music_->play(GEX::MusicID::GameTheme);
 }
 
 void GameState::draw()

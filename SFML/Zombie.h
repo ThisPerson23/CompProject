@@ -109,6 +109,8 @@ namespace GEX
 		Command							   attackCommand_;
 
 		bool							   spawnPickup_;
+
+		Command							   dropPickupCommand_;
 										   
 		bool							   showDeath_;
 		bool							   hasPlayedDeathSound_;
