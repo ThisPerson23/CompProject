@@ -56,8 +56,8 @@ namespace GEX
 	, scoreText_()
 	, score_()
 	, multiplierText_()
-	, multiplier_()
-	, enemySpawnDelay_(sf::seconds(5))
+	, multiplier_(1)
+	, enemySpawnDelay_(sf::seconds(3))
 	, enemySpawnTimer_(sf::Time::Zero)
 	, enemySpawnClock_()
 	{
@@ -248,7 +248,7 @@ namespace GEX
 
 		while (enemySpawnTimer_ >= enemySpawnDelay_)
 		{ 
-			if (activeZombies_.size() < 10)
+			if (activeZombies_.size() < 25)
 			{
 				//TODO: Implement enemy randomizer here
 				auto spawnpoint = enemySpawnPoints_[randomInt(3)];
@@ -419,6 +419,10 @@ namespace GEX
 						score_ += 200 * multiplier_;
 					else
 						score_ += 200;
+
+					zombie.playLocalSound(commandQueue_, SoundEffectID::ZombieDeath);
+
+					multiplier_++;
 				}
 
 				projectile.destroy();

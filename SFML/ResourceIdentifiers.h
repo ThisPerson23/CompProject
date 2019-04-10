@@ -79,6 +79,7 @@ namespace GEX
 		ZombieGroan1,
 		ZombieGroan2,
 		ZombieGroan3,
+		ZombieDeath,
 		Explosion1,
 		Explosion2,
 		LaunchMissile,

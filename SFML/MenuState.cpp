@@ -61,7 +61,7 @@ MenuState::MenuState(GEX::StateStack& stateStack, Context context)
 	exitOption.setFont(GEX::FontManager::getInstance().get(GEX::FontID::Spooky));
 	exitOption.setString("Exit");
 	GEX::centerOrigin(exitOption);
-	exitOption.setPosition(playOption.getPosition() + sf::Vector2f(0.f, 30.f));
+	exitOption.setPosition(playOption.getPosition() + sf::Vector2f(0.f, 50.f));
 	options_.push_back(exitOption);
 
 	updateOptionText();

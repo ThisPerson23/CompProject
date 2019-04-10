@@ -57,6 +57,7 @@ namespace GEX
 		loadBuffer(SoundEffectID::ZombieGroan1, "Media/Sound/ZombieGroan.ogg");
 		loadBuffer(SoundEffectID::ZombieGroan2, "Media/Sound/ZombieGroan2.wav");
 		loadBuffer(SoundEffectID::ZombieGroan3, "Media/Sound/ZombieGroan3.wav");
+		loadBuffer(SoundEffectID::ZombieDeath, "Media/Sound/ZombieDeath.wav");
 		loadBuffer(SoundEffectID::Explosion1, "Media/Sound/Explosion1.wav");
 		loadBuffer(SoundEffectID::Explosion2, "Media/Sound/Explosion2.wav");
 		loadBuffer(SoundEffectID::LaunchMissile, "Media/Sound/LaunchMissile.wav");
