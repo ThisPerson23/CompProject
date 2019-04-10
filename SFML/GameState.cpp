@@ -41,6 +41,7 @@ GameState::GameState(GEX::StateStack& stateStack, Context context)
 	, player_(*context.player)
 {
 	context.music_->play(GEX::MusicID::GameTheme);
+	context.music_->setVolume(15.f);
 }
 
 void GameState::draw()
@@ -76,8 +77,8 @@ bool GameState::handleEvent(const sf::Event & event)
 	auto& commands = world_.getCommandQueue();
 	player_.handleEvent(event, commands);
 
-		//'Escape' key brings up pause screen, 'G' key brings up GEX screen, 'Q' key returns player to main menu instantly
-	if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape)
+		//'Escape' and 'P' keys bring up pause screen, 'G' key brings up GEX screen, 'Q' key returns player to main menu instantly
+	if (event.type == sf::Event::KeyPressed && (event.key.code == sf::Keyboard::Escape || event.key.code == sf::Keyboard::P))
 		requestStackPush(GEX::StateID::Pause);
 	else if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::G)
 		requestStackPush(GEX::StateID::GEXScreen);

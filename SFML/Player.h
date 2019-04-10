@@ -131,7 +131,7 @@ namespace GEX
 		sf::Sprite				idleRight_;
 
 		TextNode*				healthDisplay_;
-		TextNode*				missileDisplay_;
+		TextNode*				ammoDisplay_;
 
 		float					travelDistance_;
 		std::size_t				directionIndex_;
@@ -142,7 +142,7 @@ namespace GEX
 
 		int						fireRateLevel_;
 		int						fireSpreadLevel_;
-		int						missileAmmo_;
+		int						ammo_;
 
 		sf::Time				fireCountDown_;
 

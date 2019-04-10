@@ -66,7 +66,7 @@ namespace GEX
 		, idleRight_(textures.get(TextureID::PlayerIdleRight))
 		, showExplosion_(true)
 		, healthDisplay_(nullptr)
-		, missileDisplay_(nullptr)
+		, ammoDisplay_(nullptr)
 		, travelDistance_(0.f)
 		, directionIndex_(0)
 		, isFiring_(false)
@@ -74,7 +74,7 @@ namespace GEX
 		, isMarkedForRemoval_(false)
 		, fireRateLevel_(1)
 		, fireSpreadLevel_(1)
-		, missileAmmo_(10)
+		, ammo_(250)
 		, fireCountDown_(sf::Time::Zero)
 		, fireCommand_()
 		, launchMissileCommand_()
@@ -116,10 +116,10 @@ namespace GEX
 
 		if (getCategory() == Category::Player)
 		{
-			std::unique_ptr<TextNode> missileDisplay(new TextNode(""));
-			missileDisplay->setPosition(0, 70);
-			missileDisplay_ = missileDisplay.get();
-			attachChild(std::move(missileDisplay));
+			std::unique_ptr<TextNode> ammoDisplay(new TextNode(""));
+			ammoDisplay->setPosition(0, 70);
+			ammoDisplay_ = ammoDisplay.get();
+			attachChild(std::move(ammoDisplay));
 		}
 
 		updateTexts();
@@ -137,35 +137,35 @@ namespace GEX
 		if (isDestroyed())
 			healthDisplay_->setString("");
 		else
-			healthDisplay_->setString(std::to_string(getHitpoints()) + "HP");
+			healthDisplay_->setString("HP " + std::to_string(getHitpoints()));
 
 		healthDisplay_->setPosition(0.f, 50.f);
 		healthDisplay_->setRotation(-getRotation());
 
-		// Display ammo, if available
-		if (missileDisplay_)
+		// Display ammo
+		if (ammoDisplay_)
 		{
-			if (missileAmmo_ == 0 || isDestroyed())
-				missileDisplay_->setString("");
+			if (ammo_ == 0 || isDestroyed())
+				ammoDisplay_->setString("");
 			else
-				missileDisplay_->setString("Ammo: " + std::to_string(missileAmmo_));
+				ammoDisplay_->setString("Ammo " + std::to_string(ammo_));
 		}
 	}
 
 	void Player::updateRollAnimation()
 	{
-		if (TABLE.at(type_).hasRollAnimation)
-		{
-			sf::IntRect	textureRect = TABLE.at(type_).textureRect;
+		//if (TABLE.at(type_).hasRollAnimation)
+		//{
+		//	sf::IntRect	textureRect = TABLE.at(type_).textureRect;
 
-			// Roll left or right depending on velocity
-			if (getVelocity().x < 0.f)
-				textureRect.left += textureRect.width;
-			else if (getVelocity().x > 0.f)
-				textureRect.left += 2 * textureRect.width;
+		//	// Roll left or right depending on velocity
+		//	if (getVelocity().x < 0.f)
+		//		textureRect.left += textureRect.width;
+		//	else if (getVelocity().x > 0.f)
+		//		textureRect.left += 2 * textureRect.width;
 
-			sprite_.setTextureRect(textureRect);
-		}
+		//	sprite_.setTextureRect(textureRect);
+		//}
 	}
 
 	void Player::fire()
@@ -176,24 +176,24 @@ namespace GEX
 
 	void Player::launchMissile()
 	{
-		isLaunchingMissiles_ = true;
+		/*isLaunchingMissiles_ = true;*/
 	}
 
 	void Player::increaseFireRate()
 	{
-		if (fireRateLevel_ < 10)
-			++fireRateLevel_;
+		/*if (fireRateLevel_ < 10)
+			++fireRateLevel_;*/
 	}
 
 	void Player::increaseFireSpread()
 	{
-		if (fireSpreadLevel_ < 3)
-			++fireSpreadLevel_;
+		/*if (fireSpreadLevel_ < 3)
+			++fireSpreadLevel_;*/
 	}
 
 	void Player::collectMissiles(unsigned int count)
 	{
-		missileAmmo_ += count;
+		ammo_ += count;
 	}
 
 	sf::FloatRect Player::getBoundingBox() const
@@ -499,27 +499,32 @@ namespace GEX
 		//Bullets
 		if (isFiring_ && fireCountDown_ <= sf::Time::Zero)
 		{
-			commands.push(fireCommand_);
-			playLocalSound(commands, SoundEffectID::PistolShot);
-			isFiring_ = false;
-			fireCountDown_ = TABLE.at(type_).fireInterval / (fireRateLevel_ + 1.f);
+			//Can only fire if player has ammo
+			if (ammo_ > 0)
+			{ 
+				commands.push(fireCommand_);
+				playLocalSound(commands, SoundEffectID::PistolShot);
+				isFiring_ = false;
+				--ammo_;
+				fireCountDown_ = TABLE.at(type_).fireInterval / (fireRateLevel_ + 1.f);
+			}
 		}
 		else if (fireCountDown_ > sf::Time::Zero)
 		{
 			fireCountDown_ -= dt;
 		}
 
-		//Missiles
-		if (isLaunchingMissiles_)
-		{ 
-			if(missileAmmo_ > 0)
-			{ 
-				commands.push(launchMissileCommand_);
-				playLocalSound(commands, SoundEffectID::LaunchMissile);
-				isLaunchingMissiles_ = false;
-				--missileAmmo_;
-			}
-		}
+		////Missiles
+		//if (isLaunchingMissiles_)
+		//{ 
+		//	if(ammo_ > 0)
+		//	{ 
+		//		commands.push(launchMissileCommand_);
+		//		playLocalSound(commands, SoundEffectID::LaunchMissile);
+		//		isLaunchingMissiles_ = false;
+		//		--ammo_;
+		//	}
+		//}
 	}
 
 	void Player::drawCurrent(sf::RenderTarget & target, sf::RenderStates states) const

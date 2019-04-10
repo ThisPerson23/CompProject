@@ -59,6 +59,11 @@ PauseState::PauseState(GEX::StateStack& stateStack, Context context)
 	context.music_->setPaused(true);
 }
 
+PauseState::~PauseState()
+{
+	getContext().music_->setPaused(false);
+}
+
 void PauseState::draw()
 {
 	//sf::RenderWindow& window = *getContext().window;

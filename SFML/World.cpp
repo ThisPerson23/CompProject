@@ -435,7 +435,7 @@ namespace GEX
 	void World::destroyEntitiesOutOfView()
 	{
 		Command command;
-		command.category = Category::Type::Projectile | Category::Type::EnemyAircraft;
+		command.category = Category::Type::Projectile/* | Category::Type::EnemyAircraft*/;
 		command.action = derivedAction<Entity>([this](Entity& e, sf::Time dt)
 		{
 			if (!getBattlefieldBounds().intersects(e.getBoundingBox()))

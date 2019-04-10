@@ -67,6 +67,7 @@ MenuState::MenuState(GEX::StateStack& stateStack, Context context)
 	updateOptionText();
 
 	context.music_->play(GEX::MusicID::MenuTheme);
+	context.music_->setVolume(100.f);
 }
 
 void MenuState::draw()
@@ -138,5 +139,5 @@ void MenuState::updateOptionText()
 		text.setOutlineColor(sf::Color::Black);
 	}
 
-	options_[optionsIndex_].setFillColor(sf::Color::Magenta);
+	options_[optionsIndex_].setFillColor(sf::Color::Red);
 }
