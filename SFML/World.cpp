@@ -1,7 +1,7 @@
 /**
 * @file
 * @author
-* Justin Lange 2018
+* Justin Lange 2019
 * @version 1.0
 *
 *
@@ -115,7 +115,7 @@ namespace GEX
 		sceneGraph_.update(dt, getCommandQueue());
 		adaptPlayerPosition();
 
-		//Update sounds
+		//Update sound
 		updateSound();
 
 		//Update score and multiplier texts
@@ -277,27 +277,32 @@ namespace GEX
 
 	void World::enemiesChasePlayer()
 	{
-		for (auto e : activeZombies_)
-		{
-			if (e->getType() == Zombie::ZombieType::Zombie && e->getState() != Zombie::State::Dead)
+		if (player_->getHitpoints() > 0)
+		{ 
+			for (auto e : activeZombies_)
 			{
-				auto d = distance(*player_, *e);
-
-				sf::Vector2f velocityTemp = unitVector((player_->getWorldPosition() - e->getWorldPosition()) * 10000.f);
-
-				if (std::abs(velocityTemp.x) > std::abs(velocityTemp.y))
+				//If zombie is alive, chase player
+				if (e->getType() == Zombie::ZombieType::Zombie && e->getState() != Zombie::State::Dead)
 				{
-					velocityTemp.y = 0;
-				}
-				else
-				{
-					velocityTemp.x = 0;
-				}
+					auto d = distance(*player_, *e);
 
-				e->setVelocity(velocityTemp * e->getMaxSpeed());
+					sf::Vector2f velocityTemp = unitVector((player_->getWorldPosition() - e->getWorldPosition()) * 10000.f);
+
+					if (std::abs(velocityTemp.x) > std::abs(velocityTemp.y))
+					{
+						velocityTemp.y = 0;
+					}
+					else
+					{
+						velocityTemp.x = 0;
+					}
+
+					e->setVelocity(velocityTemp * e->getMaxSpeed());
+				}
+				//If zombie is dead, set velocity to 0
+				else if (e->getType() == Zombie::ZombieType::Zombie && e->getState() == Zombie::State::Dead)
+					e->setVelocity(0.f, 0.f);
 			}
-			else if (e->getType() == Zombie::ZombieType::Zombie && e->getState() == Zombie::State::Dead)
-				e->setVelocity(0.f, 0.f);
 		}
 	}
 
@@ -377,7 +382,16 @@ namespace GEX
 				auto& player = static_cast<Player&>(*pair.first);
 				auto& zombie = static_cast<Zombie&>(*pair.second);
 
-				player.damage(zombie.getDamage());
+				zombie.setVelocity(0.f, 0.f);
+				zombie.setAttackInterval(zombie.getAttackInterval() + zombie.getAttackClock().restart());
+
+				/*if (zombie.getAttackInterval() > sf::seconds(1.5))
+					zombie.setAttackInterval(sf::seconds(1));*/
+
+				if (zombie.getAttackInterval() >= zombie.getAttackDelay())
+					player.damage(zombie.getDamage());
+
+				zombie.setAttackInterval(zombie.getAttackInterval() - zombie.getAttackDelay());
 			}
 			//Player and Pickup
 			else if (matchesCategory(pair, Category::Type::Player, Category::Type::Pickup))
@@ -418,6 +432,11 @@ namespace GEX
 				//Just move zombie a bit for now
 				//TODO: Find a better way to handle this
 				zombie.setPosition(zombie.getPosition().x + 10.f, zombie.getPosition().y + 10.f);
+
+				/*if (zombie.getWorldPosition().x > zombie2.getWorldPosition().x)
+				{
+					zombie.setPosition(zombie2.getPosition().x - 13.f)
+				}*/
 			}
 		}
 	}
@@ -509,6 +528,7 @@ namespace GEX
 		textures_.load(GEX::TextureID::PlayerIdleDown, "Media/Textures/player_idle_down.png");
 		textures_.load(GEX::TextureID::PlayerIdleRight, "Media/Textures/player_idle_right.png");
 
+		textures_.load(GEX::TextureID::PlayerDeath, "Media/Textures/player_death.png");
 	}
 
 	void World::buildScene()

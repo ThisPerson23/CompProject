@@ -65,6 +65,8 @@ namespace GEX
 		, spawnPickup_(false)
 		, showDeath_(false)
 		, hasPlayedDeathSound_(false)
+		, attackInterval_(sf::Time::Zero)
+		, attackClock_()
 	{
 		setupAnimations();
 	}
@@ -143,6 +145,16 @@ namespace GEX
 		return TABLE.at(type_).damage;
 	}
 
+	sf::Time Zombie::getAttackInterval() const
+	{
+		return attackInterval_;
+	}
+
+	void Zombie::setAttackInterval(sf::Time interval)
+	{
+		attackInterval_ = interval;
+	}
+
 	void Zombie::playLocalSound(CommandQueue & commands, SoundEffectID effect)
 	{
 		Command playSoundCommand;
@@ -152,6 +164,21 @@ namespace GEX
 			);
 
 		commands.push(playSoundCommand);
+	}
+
+	sf::Clock Zombie::getAttackClock() const
+	{
+		return attackClock_;
+	}
+
+	void Zombie::setAttackClock(sf::Clock clock)
+	{
+		attackClock_ = clock;
+	}
+
+	sf::Time Zombie::getAttackDelay() const
+	{
+		return TABLE.at(type_).attackInterval;
 	}
 
 	void Zombie::updateCurrent(sf::Time dt, CommandQueue & commands)
@@ -289,7 +316,7 @@ namespace GEX
 
 		death_.setFrameSize(sf::Vector2i(40, 45));
 		death_.setNumFrames(3);
-		death_.setDuration(sf::seconds(1.f));
+		death_.setDuration(sf::seconds(1.5f));
 
 		animations_[Zombie::State::Up] = walkUp_;
 		animations_[Zombie::State::Left] = walkLeft_;

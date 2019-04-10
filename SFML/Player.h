@@ -117,8 +117,8 @@ namespace GEX
 	private:
 		Type					type_;
 		sf::Sprite				sprite_;
-		Animation				explosion_;
-		bool					showExplosion_;
+		Animation				death_;
+		bool					showDeath_;
 
 		Animation				walkUp_;
 		Animation				walkLeft_;

@@ -78,6 +78,14 @@ namespace GEX
 		float					getMaxSpeed() const;
 		int						getDamage() const;
 
+		sf::Time				getAttackInterval() const;
+		void					setAttackInterval(sf::Time interval);
+
+		sf::Clock				getAttackClock() const;
+		void					setAttackClock(sf::Clock clock);
+
+		sf::Time				getAttackDelay() const;
+
 	protected:
 		void					updateCurrent(sf::Time dt, CommandQueue& commands) override;
 
@@ -108,6 +116,9 @@ namespace GEX
 
 		float							   travelDistance_;
 		std::size_t						   directionIndex_;
+
+		sf::Time						   attackInterval_;
+		sf::Clock						   attackClock_;
 
 		Command							   attackCommand_;
 

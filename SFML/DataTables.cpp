@@ -41,7 +41,7 @@ namespace GEX
 		std::map<Zombie::ZombieType, ZombieData> data;
 
 		data[Zombie::ZombieType::Zombie].hitpoints = 100;
-		data[Zombie::ZombieType::Zombie].speed = 50.f;
+		data[Zombie::ZombieType::Zombie].speed = 100.f;
 		data[Zombie::ZombieType::Zombie].texture = TextureID::Zombie;
 		data[Zombie::ZombieType::Zombie].attackInterval = sf::seconds(1);
 		data[Zombie::ZombieType::Zombie].damage = 1;
@@ -66,7 +66,7 @@ namespace GEX
 		std::map <Player::Type, PlayerData> data;
 
 		data[Player::Type::Player].hitpoints = 100;
-		data[Player::Type::Player].speed = 200.f;
+		data[Player::Type::Player].speed = 150.f;
 		data[Player::Type::Player].texture = TextureID::Entities;
 		data[Player::Type::Player].textureRect = sf::IntRect(0, 0, 48, 64);
 		data[Player::Type::Player].fireInterval = sf::seconds(1);

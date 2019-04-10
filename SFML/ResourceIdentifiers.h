@@ -63,7 +63,8 @@ namespace GEX
 		PlayerIdleUp,
 		PlayerIdleLeft,
 		PlayerIdleDown,
-		PlayerIdleRight
+		PlayerIdleRight,
+		PlayerDeath
 	};
 
 	enum class MusicID

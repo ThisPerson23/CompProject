@@ -55,7 +55,7 @@ namespace GEX
 		: Entity(TABLE.at(type).hitpoints)
 		, type_(type)
 		, sprite_(textures.get(TABLE.at(type).texture), TABLE.at(type).textureRect)
-		, explosion_(textures.get(TextureID::Explosion))
+		, death_(textures.get(TextureID::PlayerDeath))
 		, walkUp_(textures.get(TextureID::PlayerWalkUp))
 		, walkLeft_(textures.get(TextureID::PlayerWalkLeft))
 		, walkDown_(textures.get(TextureID::PlayerWalkDown))
@@ -64,7 +64,7 @@ namespace GEX
 		, idleLeft_(textures.get(TextureID::PlayerIdleLeft))
 		, idleDown_(textures.get(TextureID::PlayerIdleDown))
 		, idleRight_(textures.get(TextureID::PlayerIdleRight))
-		, showExplosion_(true)
+		, showDeath_(true)
 		, healthDisplay_(nullptr)
 		, ammoDisplay_(nullptr)
 		, travelDistance_(0.f)
@@ -210,13 +210,13 @@ namespace GEX
 
 	bool Player::isMarkedForRemoval() const
 	{
-		return isDestroyed() && (explosion_.isFinished() || !showExplosion_);
+		return isDestroyed() && (death_.isFinished() || !showDeath_);
 	}
 
 	void Player::remove()
 	{
 		Entity::remove();
-		showExplosion_ = false;
+		showDeath_ = false;
 	}
 
 	bool Player::isAllied() const
@@ -253,6 +253,9 @@ namespace GEX
 
 		switch (state_)
 		{
+			case Player::State::Dead:
+				death_.update(dt);
+				break;
 			case Player::State::WalkDown:
 				walkDown_.update(dt);
 				break;
@@ -270,7 +273,7 @@ namespace GEX
 				break;
 		}
 
-		// Entity has been destroyed: Possibly drop pickup, mark for removal
+		// Player has been destroyed
 		/*if (isDestroyed())
 		{
 			checkPickupDrop(commands);
@@ -545,7 +548,7 @@ namespace GEX
 		switch (state_)
 		{
 			case Player::State::Dead:
-				target.draw(explosion_, states);
+				target.draw(death_, states);
 				break;
 			case Player::State::WalkRight:
 				target.draw(walkRight_, states);
@@ -581,9 +584,9 @@ namespace GEX
 	void Player::setupAnimations() 
 	{
 		//Death
-		explosion_.setFrameSize(sf::Vector2i(256, 256));
-		explosion_.setNumFrames(16);
-		explosion_.setDuration(sf::seconds(1));
+		death_.setFrameSize(sf::Vector2i(35, 39));
+		death_.setNumFrames(4);
+		death_.setDuration(sf::seconds(1));
 
 		//Walk Up
 		walkUp_.setFrameSize(sf::Vector2i(27, 39));
@@ -609,7 +612,7 @@ namespace GEX
 		walkRight_.setDuration(sf::seconds(1.5));
 		walkRight_.setRepeating(true);
 
-		centerOrigin(explosion_);
+		centerOrigin(death_);
 		centerOrigin(sprite_);
 		centerOrigin(walkUp_);
 		centerOrigin(walkLeft_);
