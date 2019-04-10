@@ -69,7 +69,7 @@ namespace GEX
 		data[Player::Type::Player].speed = 150.f;
 		data[Player::Type::Player].texture = TextureID::Entities;
 		data[Player::Type::Player].textureRect = sf::IntRect(0, 0, 48, 64);
-		data[Player::Type::Player].fireInterval = sf::seconds(1);
+		data[Player::Type::Player].fireInterval = sf::seconds(0.5f);
 		data[Player::Type::Player].hasRollAnimation = true;
 
 		data[Player::Type::Player].textureIdleUp = TextureID::PlayerIdleUp;
@@ -112,7 +112,7 @@ namespace GEX
 		data[Pickup::Type::HealthRefill].textureRect = sf::IntRect(0, 64, 40, 40);
 		data[Pickup::Type::HealthRefill].action = [](Player& a) {a.repair(25); };
 
-		data[Pickup::Type::MissileRefill].texture = TextureID::Entities;
+		/*data[Pickup::Type::MissileRefill].texture = TextureID::Entities;
 		data[Pickup::Type::MissileRefill].textureRect = sf::IntRect(40, 64, 40, 40);
 		data[Pickup::Type::MissileRefill].action = [](Player& a) {a.collectMissiles(3); };
 
@@ -122,7 +122,7 @@ namespace GEX
 
 		data[Pickup::Type::FireRate].texture = TextureID::Entities;
 		data[Pickup::Type::FireRate].textureRect = sf::IntRect(120, 64, 40, 40);
-		data[Pickup::Type::FireRate].action = [](Player& a) {a.increaseFireRate(); };
+		data[Pickup::Type::FireRate].action = [](Player& a) {a.increaseFireRate(); };*/
 
 		return data;
 	}
@@ -136,7 +136,7 @@ namespace GEX
 		data[Projectile::Type::AlliedBullet].texture = TextureID::Entities;
 		data[Projectile::Type::AlliedBullet].textureRect = sf::IntRect(175, 64, 3, 14);
 
-		data[Projectile::Type::EnemyBullet].damage = 10;
+		/*data[Projectile::Type::EnemyBullet].damage = 10;
 		data[Projectile::Type::EnemyBullet].speed = 300.f;
 		data[Projectile::Type::EnemyBullet].texture = TextureID::Entities;
 		data[Projectile::Type::EnemyBullet].textureRect = sf::IntRect(175, 64, 3, 14);
@@ -144,7 +144,7 @@ namespace GEX
 		data[Projectile::Type::Missile].damage = 200;
 		data[Projectile::Type::Missile].speed = 200.f;
 		data[Projectile::Type::Missile].texture = TextureID::Entities;
-		data[Projectile::Type::Missile].textureRect = sf::IntRect(160, 64, 15, 24);
+		data[Projectile::Type::Missile].textureRect = sf::IntRect(160, 64, 15, 24);*/
 
 		return data;
 	}

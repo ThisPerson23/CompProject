@@ -73,14 +73,14 @@ namespace GEX
 		void					drawCurrent(sf::RenderTarget& target, sf::RenderStates states) const override;
 		unsigned int			getCategory() const override;
 
-		bool					isAllied() const;
+		//bool					isAllied() const;
 
 		void					fire();
-		void					launchMissile();
+		//void					launchMissile();
 
-		void					increaseFireRate();
-		void					increaseFireSpread();
-		void					collectMissiles(unsigned int count);
+		//void					increaseFireRate();
+		//void					increaseFireSpread();
+		void					collectAmmo(unsigned int count);
 		sf::FloatRect			getBoundingBox() const override;
 
 		bool					isMarkedForRemoval() const override;
@@ -93,7 +93,7 @@ namespace GEX
 		void					updateCurrent(sf::Time dt, CommandQueue& commands) override;
 
 	private:
-		void					updateMovementPattern(sf::Time dt);
+		//void					updateMovementPattern(sf::Time dt);
 		float					getMaxSpeed() const;
 
 		void					setupAnimations();
@@ -106,13 +106,13 @@ namespace GEX
 		void					createBullets(SceneNode& node, const TextureManager& textures);
 		void					createProjectile(SceneNode& node, Projectile::Type type, 
 												 float xoffset, float yoffset, const TextureManager& textures);
-		void					createPickup(SceneNode& node, const TextureManager& textures) const;
+		//void					createPickup(SceneNode& node, const TextureManager& textures) const;
 
-		void					checkPickupDrop(CommandQueue& commands);
+		//void					checkPickupDrop(CommandQueue& commands);
 		void					checkProjectileLaunch(sf::Time dt, CommandQueue& commands);
 
 		void					updateTexts(); //update mini health and missile display
-		void					updateRollAnimation(); //update the sprite of the player aircraft, depending on the travel direction
+		//void					updateRollAnimation(); //update the sprite of the player aircraft, depending on the travel direction
 
 	private:
 		Type					type_;
@@ -133,26 +133,26 @@ namespace GEX
 		TextNode*				healthDisplay_;
 		TextNode*				ammoDisplay_;
 
-		float					travelDistance_;
-		std::size_t				directionIndex_;
+		//float					travelDistance_;
+		//std::size_t				directionIndex_;
 
 		bool					isFiring_;
-		bool					isLaunchingMissiles_;
+		//bool					isLaunchingMissiles_;
 		bool					isMarkedForRemoval_;
 
-		int						fireRateLevel_;
-		int						fireSpreadLevel_;
+		//int						fireRateLevel_;
+		//int						fireSpreadLevel_;
 		int						ammo_;
 
 		sf::Time				fireCountDown_;
 
 		Command					fireCommand_;
-		Command					launchMissileCommand_;
-		Command					dropPickupCommand_;
+		//Command					launchMissileCommand_;
+		//Command					dropPickupCommand_;
 
-		bool					spawnPickup_;
+		//bool					spawnPickup_;
 
-		bool					hasPlayedExplosionSound_;
+		bool					hasPlayedDeathSound_;
 
 		Player::State			state_;
 	};

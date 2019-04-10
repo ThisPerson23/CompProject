@@ -54,6 +54,7 @@ namespace GEX
 	, scrollSpeed_(0.f)
 	, player_(nullptr)
 	, scoreText_()
+	, activeZombies_()
 	, score_()
 	, multiplierText_()
 	, multiplier_(1)
@@ -93,7 +94,7 @@ namespace GEX
 		destroyEntitiesOutOfView();
 
 		// Guide missiles
-		guideMissiles();
+		//guideMissiles();
 
 		// Run all the commands in the command queue
 		while (!commandQueue_.isEmpty())
@@ -158,10 +159,10 @@ namespace GEX
 		player_->setPosition(position);
 	}
 
-	void World::adaptEnemies()
+	/*void World::adaptEnemies()
 	{
 		
-	}
+	}*/
 
 	void World::updateSound()
 	{
@@ -170,9 +171,9 @@ namespace GEX
 	}
 
 		// Add spawn points for enemies outside the local view
-	void World::addEnemies()
+	/*void World::addEnemies()
 	{
-		/*addEnemy(Aircraft::Type::Raptor, 0.f, 500.f);
+		addEnemy(Aircraft::Type::Raptor, 0.f, 500.f);
 		addEnemy(Aircraft::Type::Raptor, 0.f, 1000.f);
 		addEnemy(Aircraft::Type::Raptor, +100.f, 1150.f);
 		addEnemy(Aircraft::Type::Raptor, -100.f, 1150.f);
@@ -202,14 +203,14 @@ namespace GEX
 			[](Spawnpoint lhs, Spawnpoint rhs)
 		{
 			return lhs.y < rhs.y;
-		});*/
-	}
+		});
+	}*/
 
-	void World::addEnemy(Spawnpoint spawn)
+	/*void World::addEnemy(Spawnpoint spawn)
 	{
-		/*Spawnpoint spawnpoint(type, spawnPosition_.x + relX, spawnPosition_.y - relY);
-		enemySpawnPoints_.push_back(spawnpoint);*/
-	}
+		Spawnpoint spawnpoint(type, spawnPosition_.x + relX, spawnPosition_.y - relY);
+		enemySpawnPoints_.push_back(spawnpoint);
+	}*/
 
 	//Play a random zombie groan noise for atmosphere every 15 secomds
 	void World::playZombieGroan()
@@ -306,46 +307,46 @@ namespace GEX
 		}
 	}
 
-	void World::guideMissiles()
-	{
-		//// build a list of active Enemies
-		//Command enemyCollector;
-		//enemyCollector.category = Category::EnemyAircraft;
-		//enemyCollector.action = derivedAction<Player>([this](Player& enemy, sf::Time dt)
-		//{
-		//	if (!enemy.isDestroyed())
-		//		activeEnemies_.push_back(&enemy);
-		//});
+	//void World::guideMissiles()
+	//{
+	//	// build a list of active Enemies
+	//	Command enemyCollector;
+	//	enemyCollector.category = Category::EnemyAircraft;
+	//	enemyCollector.action = derivedAction<Player>([this](Player& enemy, sf::Time dt)
+	//	{
+	//		if (!enemy.isDestroyed())
+	//			activeEnemies_.push_back(&enemy);
+	//	});
 
-		//Command missileGuider;
-		//missileGuider.category = Category::Type::AlliedProjectile;
-		//missileGuider.action = derivedAction<Projectile>([this](Projectile& missile, sf::Time dt)
-		//{
-		//	//ignore bullets
-		//	if (!missile.isGuided())
-		//		return;
+	//	Command missileGuider;
+	//	missileGuider.category = Category::Type::AlliedProjectile;
+	//	missileGuider.action = derivedAction<Projectile>([this](Projectile& missile, sf::Time dt)
+	//	{
+	//		//ignore bullets
+	//		if (!missile.isGuided())
+	//			return;
 
-		//	float minDistance = std::numeric_limits<float>::max();
-		//	Player* closestEnemy = nullptr;
+	//		float minDistance = std::numeric_limits<float>::max();
+	//		Player* closestEnemy = nullptr;
 
-		//	for (Player* e : activeEnemies_)
-		//	{
-		//		auto d = distance(missile, *e);
-		//		if (d < minDistance)
-		//		{
-		//			minDistance = d;
-		//			closestEnemy = e;
-		//		}
-		//	}
+	//		for (Player* e : activeEnemies_)
+	//		{
+	//			auto d = distance(missile, *e);
+	//			if (d < minDistance)
+	//			{
+	//				minDistance = d;
+	//				closestEnemy = e;
+	//			}
+	//		}
 
-		//	if (closestEnemy)
-		//		missile.guidedTowards(closestEnemy->getWorldPosition());
-		//});
+	//		if (closestEnemy)
+	//			missile.guidedTowards(closestEnemy->getWorldPosition());
+	//	});
 
-		//commandQueue_.push(enemyCollector);
-		//commandQueue_.push(missileGuider);
-		//activeEnemies_.clear();
-	}
+	//	commandQueue_.push(enemyCollector);
+	//	commandQueue_.push(missileGuider);
+	//	activeEnemies_.clear();
+	//}
 
 	bool matchesCategory(SceneNode::Pair& colliders, Category::Type type1, Category::Type type2)
 	{
@@ -489,10 +490,10 @@ namespace GEX
 		return !player_->isDestroyed();
 	}
 
-	bool World::hasPlayerReachedEnd() const
+	/*bool World::hasPlayerReachedEnd() const
 	{
 		return !worldBounds_.contains(player_->getPosition());
-	}
+	}*/
 
 	void World::loadTextures()
 	{
@@ -540,7 +541,7 @@ namespace GEX
 		// Initialize layers
 		for (int i = 0; i < LayerCount; i++)
 		{
-			auto category = i == UpperAir ? Category::Type::SceneAirLayer : Category::Type::None;
+			auto category = i == Ground ? Category::Type::GroundLayer : Category::Type::None;
 			SceneNode::Ptr layer(new SceneNode(category));
 			sceneLayers_.push_back(layer.get());
 			sceneGraph_.attachChild(std::move(layer));
@@ -552,10 +553,10 @@ namespace GEX
 
 		// Particle System
 		std::unique_ptr<ParticleNode> smoke(new ParticleNode(Particle::Type::Smoke, textures_));
-		sceneLayers_[LowerAir]->attachChild(std::move(smoke));
+		sceneLayers_[LowerGround]->attachChild(std::move(smoke));
 
 		std::unique_ptr<ParticleNode> fire(new ParticleNode(Particle::Type::Propellant, textures_));
-		sceneLayers_[LowerAir]->attachChild(std::move(fire));
+		sceneLayers_[LowerGround]->attachChild(std::move(fire));
 
 		// draw background
 		sf::Texture& texture = textures_.get(TextureID::LunarBackground);
@@ -572,7 +573,7 @@ namespace GEX
 		leader->setPosition(spawnPosition_);
 		/*leader->setVelocity(50.f, scrollSpeed_);*/
 		player_ = leader.get();
-		sceneLayers_[UpperAir]->attachChild(std::move(leader));
+		sceneLayers_[Ground]->attachChild(std::move(leader));
 
 		// add enemy planes
 		/*addEnemies();*/

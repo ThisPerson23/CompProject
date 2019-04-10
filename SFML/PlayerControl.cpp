@@ -67,7 +67,7 @@ namespace GEX
 		keyBindings_[sf::Keyboard::Down] = Action::MoveDown;
 
 		keyBindings_[sf::Keyboard::Space] = Action::Fire;
-		keyBindings_[sf::Keyboard::M] = Action::LaunchMissile;
+		//keyBindings_[sf::Keyboard::M] = Action::LaunchMissile;
 
 		// set up action bindings
 		initializeActions();
@@ -87,7 +87,7 @@ namespace GEX
 		actionBindings_[Action::Fire].category = Category::Player;
 
 		//actionBindings_[Action::LaunchMissile].action = derivedAction<Aircraft>(std::bind(&Aircraft::launchMissile, std::placeholders::_1));
-		actionBindings_[Action::LaunchMissile].category = Category::Player;
+		//actionBindings_[Action::LaunchMissile].category = Category::Player;
 	}
 
 	void PlayerControl::handleEvent(const sf::Event & event, CommandQueue & commands)
@@ -135,7 +135,7 @@ namespace GEX
 		actionBindings_[Action::MoveDown].action = derivedAction<Player>(AircraftMover(0.f, playerSpeed));
 
 		actionBindings_[Action::Fire].action = derivedAction<Player>(std::bind(&Player::fire, std::placeholders::_1));
-		actionBindings_[Action::LaunchMissile].action = derivedAction<Player>(std::bind(&Player::launchMissile, std::placeholders::_1));
+		//actionBindings_[Action::LaunchMissile].action = derivedAction<Player>(std::bind(&Player::launchMissile, std::placeholders::_1));
 	}
 
 	bool PlayerControl::isRealTimeAction(Action action)
