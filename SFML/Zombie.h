@@ -98,6 +98,7 @@ namespace GEX
 		Animation						   walkLeft_;
 		Animation						   walkDown_;
 		Animation						   walkRight_;
+		Animation						   death_;
 
 		sf::Sprite						   sprite_;
 

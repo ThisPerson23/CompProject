@@ -56,6 +56,7 @@ namespace GEX
 		, walkLeft_(textures.get(TextureID::ZombieWalkLeft))
 		, walkDown_(textures.get(TextureID::ZombieWalkDown))
 		, walkRight_(textures.get(TextureID::ZombieWalkRight))
+		, death_(textures.get(TextureID::ZombieDeath))
 		, sprite_(textures.get(TABLE.at(type).texture))
 		, animations_()
 		, travelDistance_(0.f)
@@ -242,14 +243,20 @@ namespace GEX
 		walkRight_.setDuration(sf::seconds(0.5));
 		walkRight_.setRepeating(true);
 
+		death_.setFrameSize(sf::Vector2i(40, 45));
+		death_.setNumFrames(3);
+		death_.setDuration(sf::seconds(1.f));
+
 		animations_[Zombie::State::Up] = walkUp_;
 		animations_[Zombie::State::Left] = walkLeft_;
 		animations_[Zombie::State::Down] = walkDown_;
 		animations_[Zombie::State::Right] = walkRight_;
+		animations_[Zombie::State::Dead] = death_;
 
 		centerOrigin(walkUp_);
 		centerOrigin(walkLeft_);
 		centerOrigin(walkDown_);
 		centerOrigin(walkRight_);
+		centerOrigin(death_);
 	}
 }

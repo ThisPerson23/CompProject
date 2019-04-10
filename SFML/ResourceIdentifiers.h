@@ -51,6 +51,7 @@ namespace GEX
 		ZombieWalkLeft,
 		ZombieWalkDown,
 		ZombieWalkRight,
+		ZombieDeath,
 		SkeletonWalkUp,
 		SkeletonWalkLeft,
 		SkeletonWalkDown,

@@ -376,6 +376,7 @@ namespace GEX
 
 		for (SceneNode::Pair pair : collisionPairs)
 		{
+			//Player and Zombie
 			if (matchesCategory(pair, Category::Type::Player, Category::Type::Zombie))
 			{
 				auto& player = static_cast<Player&>(*pair.first);
@@ -383,6 +384,7 @@ namespace GEX
 
 				player.damage(zombie.getDamage());
 			}
+			//Player and Pickup
 			else if (matchesCategory(pair, Category::Type::Player, Category::Type::Pickup))
 			{
 				auto& player = static_cast<Player&>(*pair.first);
@@ -393,6 +395,7 @@ namespace GEX
 
 				player_->playLocalSound(commandQueue_, SoundEffectID::CollectPickup);
 			}
+			//Zombie and Bullet
 			else if (matchesCategory(pair, Category::Type::Zombie, Category::Type::AlliedProjectile))
 			{
 				auto& zombie = static_cast<Zombie&>(*pair.first);
@@ -407,24 +410,23 @@ namespace GEX
 				zombie.destroy();
 				projectile.destroy();*/
 			}
-			//else if (matchesCategory(pair, Category::Type::AlliedProjectile, Category::Type::Zombie))
-			//{
-			//	auto& zombie = static_cast<Zombie&>(*pair.first);
-			//	auto& projectile = static_cast<Projectile&>(*pair.second);
+			//Zombie and Zombie
+			else if (matchesCategory(pair, Category::Type::Zombie, Category::Type::Zombie))
+			{
+				auto& zombie = static_cast<Zombie&>(*pair.first);
+				auto& zombie2 = static_cast<Zombie&>(*pair.second);
 
-			//	zombie.destroy();
-			//	/*zombie.damage(projectile.getDamage());*/
-			//	/*projectile.destroy();*/
-			//}
+				zombie.setPosition(zombie.getPosition().x + 10.f, zombie.getPosition().y);
+			}
 		}
 	}
 
 	void World::setupSpawnPoints()
 	{
-		Spawnpoint point1(50.f, worldView_.getSize().y / 2.f);
-		Spawnpoint point2(worldView_.getSize().x / 2.f, 50.f);
-		Spawnpoint point3(1630.f, worldView_.getSize().y / 2.f);
-		Spawnpoint point4(worldView_.getSize().x / 2.f, 1000.f);
+		Spawnpoint point1(-50.f, worldView_.getSize().y / 2.f);
+		Spawnpoint point2(worldView_.getSize().x / 2.f, -50.f);
+		Spawnpoint point3(1730.f, worldView_.getSize().y / 2.f);
+		Spawnpoint point4(worldView_.getSize().x / 2.f, 1100.f);
 
 		enemySpawnPoints_.push_back(point1);
 		enemySpawnPoints_.push_back(point2);
@@ -487,6 +489,7 @@ namespace GEX
 		textures_.load(GEX::TextureID::ZombieWalkLeft, "Media/Textures/zombie_walk_left.png");
 		textures_.load(GEX::TextureID::ZombieWalkDown, "Media/Textures/zombie_walk_down.png");
 		textures_.load(GEX::TextureID::ZombieWalkRight, "Media/Textures/zombie_walk_right.png");
+		textures_.load(GEX::TextureID::ZombieDeath, "Media/Textures/zombie_death.png");
 
 		//Skeletons
 		textures_.load(GEX::TextureID::SkeletonWalkUp, "Media/Textures/undeadking_walk_up.png");
