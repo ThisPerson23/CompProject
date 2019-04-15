@@ -1,12 +1,12 @@
 /**
 * @file
 * @author
-* Justin Lange 2018
+* Justin Lange 2019
 * @version 1.0
 *
 *
 * @section DESCRIPTION
-* Aircraft Class
+* Player Class
 *
 *
 *

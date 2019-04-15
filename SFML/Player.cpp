@@ -1,12 +1,12 @@
 /**
 * @file
 * @author
-* Justin Lange 2018
+* Justin Lange 2019
 * @version 1.0
 *
 *
 * @section DESCRIPTION
-* Aircraft class
+* Player class
 *
 *
 *
@@ -67,20 +67,11 @@ namespace GEX
 		, showDeath_(true)
 		, healthDisplay_(nullptr)
 		, ammoDisplay_(nullptr)
-		//, travelDistance_(0.f)
-		//, directionIndex_(0)
 		, isFiring_(false)
-		//, isLaunchingMissiles_(false)
 		, isMarkedForRemoval_(false)
-		//, fireRateLevel_(1)
-		//, fireSpreadLevel_(1)
 		, ammo_(250)
 		, fireCountDown_(sf::Time::Zero)
 		, fireCommand_()
-		//, launchMissileCommand_()
-		//, dropPickupCommand_()
-		//, spawnPickup_(false)
-		//, hasPlayedExplosionSound_(false)
 		, state_(Player::State::IdleDown)
 	{
 		setupAnimations();
@@ -96,18 +87,6 @@ namespace GEX
 		{
 			createBullets(node, textures);
 		};
-
-		/*launchMissileCommand_.category = Category::GroundLayer;
-		launchMissileCommand_.action = [this, &textures](SceneNode& node, sf::Time dt)
-		{
-			createProjectile(node, Projectile::Type::Missile, 0.f, 0.5f, textures);
-		};
-
-		dropPickupCommand_.category = Category::GroundLayer;
-		dropPickupCommand_.action = [this, &textures](SceneNode& node, sf::Time dt)
-		{
-			createPickup(node, textures);
-		};*/
 
 		//set up text for health and missiles
 		std::unique_ptr<TextNode> health(new TextNode(""));
@@ -149,44 +128,11 @@ namespace GEX
 		}
 	}
 
-	//void Player::updateRollAnimation()
-	//{
-	//	if (TABLE.at(type_).hasRollAnimation)
-	//	{
-	//		sf::IntRect	textureRect = TABLE.at(type_).textureRect;
-
-	//		// Roll left or right depending on velocity
-	//		if (getVelocity().x < 0.f)
-	//			textureRect.left += textureRect.width;
-	//		else if (getVelocity().x > 0.f)
-	//			textureRect.left += 2 * textureRect.width;
-
-	//		sprite_.setTextureRect(textureRect);
-	//	}
-	//}
-
 	void Player::fire()
 	{
 		if (TABLE.at(type_).fireInterval != sf::Time::Zero)
 			isFiring_ = true;
 	}
-
-	/*void Player::launchMissile()
-	{
-		isLaunchingMissiles_ = true;
-	}*/
-
-	/*void Player::increaseFireRate()
-	{
-		if (fireRateLevel_ < 10)
-			++fireRateLevel_;
-	}*/
-
-	/*void Player::increaseFireSpread()
-	{
-		if (fireSpreadLevel_ < 3)
-			++fireSpreadLevel_;
-	}*/
 
 	void Player::collectAmmo(unsigned int count)
 	{
@@ -216,11 +162,6 @@ namespace GEX
 		showDeath_ = false;
 	}
 
-	/*bool Player::isAllied() const
-	{
-		return type_ == Type::Player;
-	}*/
-
 	void Player::playLocalSound(CommandQueue& commands, SoundEffectID effect)
 	{
 		Command playSoundCommand;
@@ -236,15 +177,6 @@ namespace GEX
 	{
 		//Check if bullets or missiles are fired
 		checkProjectileLaunch(dt, commands);
-
-		/*if (getVelocity().x > 0)
-			walkRight_.update(dt);
-		else if (getVelocity().x < 0)
-			walkLeft_.update(dt);
-		else if (getVelocity().y > 0)
-			walkDown_.update(dt);
-		else if (getVelocity().y < 0)
-			walkUp_.update(dt);*/
 
 		updateStates(dt);
 
@@ -270,54 +202,13 @@ namespace GEX
 				break;
 		}
 
-		// Player has been destroyed
-		/*if (isDestroyed())
-		{
-			checkPickupDrop(commands);
-			explosion_.update(dt);
-
-			if (!hasPlayedExplosionSound_)
-			{
-				hasPlayedExplosionSound_ = true;
-				SoundEffectID effect = (randomInt(2) == 0 ? SoundEffectID::Explosion1 : SoundEffectID::Explosion2);
-				playLocalSound(commands, effect);
-			}
-
-			return;
-		}*/
-
 		Entity::updateCurrent(dt, commands);
 
 		if (!isDestroyed())
 		{
-			// Update texts
 			updateTexts();
-			//updateRollAnimation();
-			//updateMovementPattern(dt);
 		}
 	}
-
-	//void Player::updateMovementPattern(sf::Time dt)
-	//{
-	//	// movement pattern
-	//	const std::vector<Direction>& directions = TABLE.at(type_).directions;
-
-	//	if (!directions.empty())
-	//	{
-	//		if (travelDistance_ > directions[directionIndex_].distance)
-	//		{
-	//			directionIndex_ = (++directionIndex_) % directions.size();
-	//			travelDistance_ = 0;
-	//		}
-
-	//		float radians = toRadian(directions[directionIndex_].angle + 90.f);
-	//		float vx = getMaxSpeed() * std::cos(radians);
-	//		float vy = getMaxSpeed() * std::sin(radians);
-
-	//		setVelocity(vx, vy);
-	//		travelDistance_ += getMaxSpeed() * dt.asSeconds();
-	//	}
-	//}
 
 	void Player::updateStates(sf::Time dt)
 	{
@@ -389,22 +280,6 @@ namespace GEX
 	{
 		Projectile::Type type = Projectile::Type::AlliedBullet;
 
-		/*switch (fireSpreadLevel_)
-		{
-		case 1:
-			createProjectile(node, type, 0.f, 0.5f, textures);
-			break;
-		case 2:
-			createProjectile(node, type, -0.33f, 0.5f, textures);
-			createProjectile(node, type, +0.33f, 0.5f, textures);
-			break;
-		case 3:
-			createProjectile(node, type, -0.5f, 0.5f, textures);
-			createProjectile(node, type, 0.f, 0.5f, textures);
-			createProjectile(node, type, +0.5f, 0.5f, textures);
-			break;
-		}*/
-
 		switch (state_)
 		{
 			case Player::State::WalkUp:
@@ -433,7 +308,7 @@ namespace GEX
 		std::unique_ptr<Projectile> projectile(new Projectile(type, textures));
 		sf::Vector2f velocity;
 
-		sf::Vector2f offset;/*(xoffset * sprite_.getGlobalBounds().width, yoffset * sprite_.getGlobalBounds().height);*/
+		sf::Vector2f offset;
 
 		switch (state_)
 		{
@@ -463,8 +338,6 @@ namespace GEX
 				//Do Nothing
 				break;
 		}
-
-		/*sf::Vector2f velocity(0, projectile->getMaxSpeed());*/
 		float sign = -1.f;
 
 		projectile->setPosition(getWorldPosition() + offset * sign);
@@ -472,29 +345,8 @@ namespace GEX
 		node.attachChild(std::move(projectile));
 	}
 
-	/*void Player::createPickup(SceneNode & node, const TextureManager & textures) const
-	{
-		auto type = static_cast<Pickup::Type>(randomInt(static_cast<int>(Pickup::Type::Count)));
-
-		std::unique_ptr<Pickup> pickup(new Pickup(type, textures));
-		pickup->setPosition(getWorldPosition());
-		pickup->setVelocity(0.f, 0.f);
-		node.attachChild(std::move(pickup));
-	}*/
-
-	/*void Player::checkPickupDrop(CommandQueue & commands)
-	{
-		if (!isAllied() && randomInt(3) == 0 && !spawnPickup_)
-			commands.push(dropPickupCommand_);
-
-		spawnPickup_ = true;
-	}*/
-
 	void Player::checkProjectileLaunch(sf::Time dt, CommandQueue & commands)
 	{
-		//enemies always fire
-		/*if (!isAllied())
-			fire();*/
 
 		//Bullets
 		if (isFiring_ && fireCountDown_ <= sf::Time::Zero)
@@ -506,42 +358,17 @@ namespace GEX
 				playLocalSound(commands, SoundEffectID::PistolShot);
 				isFiring_ = false;
 				--ammo_;
-				fireCountDown_ = TABLE.at(type_).fireInterval/* / (fireRateLevel_ + 1.f*/;
+				fireCountDown_ = TABLE.at(type_).fireInterval;
 			}
 		}
 		else if (fireCountDown_ > sf::Time::Zero)
 		{
 			fireCountDown_ -= dt;
 		}
-
-		////Missiles
-		//if (isLaunchingMissiles_)
-		//{ 
-		//	if(ammo_ > 0)
-		//	{ 
-		//		commands.push(launchMissileCommand_);
-		//		playLocalSound(commands, SoundEffectID::LaunchMissile);
-		//		isLaunchingMissiles_ = false;
-		//		--ammo_;
-		//	}
-		//}
 	}
 
 	void Player::drawCurrent(sf::RenderTarget & target, sf::RenderStates states) const
 	{
-		/*if (isDestroyed() && showExplosion_)
-			target.draw(explosion_, states);
-		else if (this->getVelocity().x > 0)
-			target.draw(walkRight_, states);
-		else if (this->getVelocity().x < 0)
-			target.draw(walkLeft_, states);
-		else if (this->getVelocity().y > 0)
-			target.draw(walkDown_, states);
-		else if (this->getVelocity().y < 0)
-			target.draw(walkUp_, states);
-		else
-			target.draw(sprite_, states);*/
-
 		switch (state_)
 		{
 			case Player::State::Dead:
