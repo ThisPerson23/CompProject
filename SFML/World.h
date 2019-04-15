@@ -81,7 +81,6 @@ namespace GEX
 		CommandQueue&				getCommandQueue();
 
 		bool						hasAlivePlayer() const;
-		//bool						hasPlayerReachedEnd() const;
 
 	private:
 		void						loadTextures();
@@ -89,12 +88,9 @@ namespace GEX
 		void						adaptPlayerVelocity();
 		void						adaptPlayerPosition();
 
-		//void						adaptEnemies();
-
 		void						updateScoreAndMultiplier();
 
-		//void						addEnemies();
-		//void						addEnemy(Spawnpoint spawn);
+		void						cleanEnemyVector();
 		void						spawnEnemies();
 
 		sf::FloatRect				getViewBounds() const;
@@ -102,7 +98,6 @@ namespace GEX
 
 		void						enemiesChasePlayer();
 
-		//void						guideMissiles();		
 		void						handleCollision();
 
 		void						playZombieGroan();
@@ -119,8 +114,6 @@ namespace GEX
 			Background = 0,
 			LowerGround,
 			Ground,
-			/*LowerAir,
-			UpperAir,*/
 			LayerCount
 		};
 
@@ -141,10 +134,7 @@ namespace GEX
 
 		std::vector<Spawnpoint>		enemySpawnPoints_;
 
-		//std::vector<Entity*>		activeEnemies_;
-
 		std::vector<Zombie*>		activeZombies_;
-		//std::vector<Skeleton*>		activeSkeletons_;
 
 		sf::Text					scoreText_;
 		sf::Text					multiplierText_;

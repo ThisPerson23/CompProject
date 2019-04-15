@@ -41,7 +41,7 @@ namespace GEX
 		std::map<Zombie::ZombieType, ZombieData> data;
 
 		data[Zombie::ZombieType::Zombie].hitpoints = 100;
-		data[Zombie::ZombieType::Zombie].speed = 100.f;
+		data[Zombie::ZombieType::Zombie].speed = 75.f;
 		data[Zombie::ZombieType::Zombie].texture = TextureID::Zombie;
 		data[Zombie::ZombieType::Zombie].attackInterval = sf::seconds(1);
 		data[Zombie::ZombieType::Zombie].damage = 1;
@@ -70,36 +70,11 @@ namespace GEX
 		data[Player::Type::Player].texture = TextureID::Entities;
 		data[Player::Type::Player].textureRect = sf::IntRect(0, 0, 48, 64);
 		data[Player::Type::Player].fireInterval = sf::seconds(0.5f);
-		data[Player::Type::Player].hasRollAnimation = true;
 
 		data[Player::Type::Player].textureIdleUp = TextureID::PlayerIdleUp;
 		data[Player::Type::Player].textureIdleLeft = TextureID::PlayerIdleLeft;
 		data[Player::Type::Player].textureIdleDown = TextureID::PlayerIdleDown;
 		data[Player::Type::Player].textureIdleRight = TextureID::PlayerIdleRight;
-
-		/*data[Player::Type::Raptor].hitpoints = 20;
-		data[Player::Type::Raptor].speed = 80.f;
-		data[Player::Type::Raptor].texture = TextureID::Entities;
-		data[Player::Type::Raptor].textureRect = sf::IntRect(144, 0, 84, 64);
-		data[Player::Type::Raptor].fireInterval = sf::Time::Zero;
-		data[Player::Type::Raptor].hasRollAnimation = false;
-
-		data[Player::Type::Raptor].directions.emplace_back(Direction(45.f, 80.f));
-		data[Player::Type::Raptor].directions.emplace_back(Direction(-45.f, 160.f));
-		data[Player::Type::Raptor].directions.emplace_back(Direction(45.f, 80.f));
-
-		data[Player::Type::Avenger].hitpoints = 40;
-		data[Player::Type::Avenger].speed = 50.f;
-		data[Player::Type::Avenger].texture = TextureID::Entities;
-		data[Player::Type::Avenger].textureRect = sf::IntRect(228, 0, 60, 59);
-		data[Player::Type::Avenger].fireInterval = sf::seconds(2);
-		data[Player::Type::Avenger].hasRollAnimation = false;
-
-		data[Player::Type::Avenger].directions.emplace_back(Direction(45.f, 50.f));
-		data[Player::Type::Avenger].directions.emplace_back(Direction(0.f, 50.f));
-		data[Player::Type::Avenger].directions.emplace_back(Direction(-45.f, 100.f));
-		data[Player::Type::Avenger].directions.emplace_back(Direction(0.f, 50.f));
-		data[Player::Type::Avenger].directions.emplace_back(Direction(45.f, 50.f));*/
 
 		return data;
 	}
@@ -108,21 +83,9 @@ namespace GEX
 	{
 		std::map <Pickup::Type, PickupData> data;
 
-		data[Pickup::Type::HealthRefill].texture = TextureID::Entities;
-		data[Pickup::Type::HealthRefill].textureRect = sf::IntRect(0, 64, 40, 40);
-		data[Pickup::Type::HealthRefill].action = [](Player& a) {a.repair(25); };
-
-		/*data[Pickup::Type::MissileRefill].texture = TextureID::Entities;
-		data[Pickup::Type::MissileRefill].textureRect = sf::IntRect(40, 64, 40, 40);
-		data[Pickup::Type::MissileRefill].action = [](Player& a) {a.collectMissiles(3); };
-
-		data[Pickup::Type::FireSpread].texture = TextureID::Entities;
-		data[Pickup::Type::FireSpread].textureRect = sf::IntRect(80, 64, 40, 40);
-		data[Pickup::Type::FireSpread].action = [](Player& a) {a.increaseFireSpread(); };
-
-		data[Pickup::Type::FireRate].texture = TextureID::Entities;
-		data[Pickup::Type::FireRate].textureRect = sf::IntRect(120, 64, 40, 40);
-		data[Pickup::Type::FireRate].action = [](Player& a) {a.increaseFireRate(); };*/
+		data[Pickup::Type::AmmoRefill].texture = TextureID::Entities;
+		data[Pickup::Type::AmmoRefill].textureRect = sf::IntRect(120, 64, 40, 40);
+		data[Pickup::Type::AmmoRefill].action = [](Player& a) {a.collectAmmo(15); };
 
 		return data;
 	}
@@ -135,16 +98,6 @@ namespace GEX
 		data[Projectile::Type::AlliedBullet].speed = 1500.f;
 		data[Projectile::Type::AlliedBullet].texture = TextureID::Entities;
 		data[Projectile::Type::AlliedBullet].textureRect = sf::IntRect(175, 64, 3, 14);
-
-		/*data[Projectile::Type::EnemyBullet].damage = 10;
-		data[Projectile::Type::EnemyBullet].speed = 300.f;
-		data[Projectile::Type::EnemyBullet].texture = TextureID::Entities;
-		data[Projectile::Type::EnemyBullet].textureRect = sf::IntRect(175, 64, 3, 14);
-
-		data[Projectile::Type::Missile].damage = 200;
-		data[Projectile::Type::Missile].speed = 200.f;
-		data[Projectile::Type::Missile].texture = TextureID::Entities;
-		data[Projectile::Type::Missile].textureRect = sf::IntRect(160, 64, 15, 24);*/
 
 		return data;
 	}

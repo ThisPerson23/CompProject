@@ -58,25 +58,25 @@ namespace GEX
 	, score_()
 	, multiplierText_()
 	, multiplier_(1)
-	, enemySpawnDelay_(sf::seconds(3))
+	, enemySpawnDelay_(sf::seconds(4.5f))
 	, enemySpawnTimer_(sf::Time::Zero)
 	, enemySpawnClock_()
 	{
-		//Font
+		//Score Text
 		scoreText_.setFont(GEX::FontManager::getInstance().get(GEX::FontID::Spooky));
+		centerOrigin(scoreText_);
 		scoreText_.setPosition(worldView_.getSize().x / 2.f - 50.f, 20.f);
 		scoreText_.setCharacterSize(25);
 		scoreText_.setString("Score " + std::to_string(score_));
 
+		//Multiplier Text
 		multiplierText_.setFont(GEX::FontManager::getInstance().get(GEX::FontID::Spooky));
-		multiplierText_.setPosition(worldView_.getSize().x / 2.f - 50.f, 40.f);
+		centerOrigin(multiplierText_);
+		multiplierText_.setPosition(worldView_.getSize().x / 2.f - 20.f, 50.f);
 		multiplierText_.setCharacterSize(25);
 		multiplierText_.setString("X" + std::to_string(multiplier_));
 
 		loadTextures();
-
-		//prepare the view
-		/*worldView_.setCenter(spawnPosition_);*/
 
 		buildScene();
 	}
@@ -121,6 +121,9 @@ namespace GEX
 
 		//Update score and multiplier texts
 		updateScoreAndMultiplier();
+
+		//Clean active enemy vector
+		cleanEnemyVector();
 		
 		//Make enemies chase the player
 		enemiesChasePlayer();
@@ -134,6 +137,19 @@ namespace GEX
 	{
 		scoreText_.setString("Score " + std::to_string(score_));
 		multiplierText_.setString("X" + std::to_string(multiplier_));
+	}
+
+	//Clean the vector of active enemies. Remove the enemy if they are dead
+	void World::cleanEnemyVector()
+	{
+		if (activeZombies_.size() != 0)
+		{ 
+			for (int i = 0; i < activeZombies_.size() - 1; i++)
+			{
+				if (activeZombies_.at(i)->getState() == Zombie::State::Dead)
+					activeZombies_.erase(activeZombies_.begin() + i);
+			}
+		}
 	}
 
 	void World::adaptPlayerVelocity()
@@ -159,58 +175,11 @@ namespace GEX
 		player_->setPosition(position);
 	}
 
-	/*void World::adaptEnemies()
-	{
-		
-	}*/
-
 	void World::updateSound()
 	{
 		sounds_.setListenerPosition(player_->getWorldPosition());
 		sounds_.removeStoppedSounds();
 	}
-
-		// Add spawn points for enemies outside the local view
-	/*void World::addEnemies()
-	{
-		addEnemy(Aircraft::Type::Raptor, 0.f, 500.f);
-		addEnemy(Aircraft::Type::Raptor, 0.f, 1000.f);
-		addEnemy(Aircraft::Type::Raptor, +100.f, 1150.f);
-		addEnemy(Aircraft::Type::Raptor, -100.f, 1150.f);
-		addEnemy(Aircraft::Type::Avenger, 70.f, 1500.f);
-		addEnemy(Aircraft::Type::Avenger, -70.f, 1500.f);
-		addEnemy(Aircraft::Type::Avenger, -70.f, 1710.f);
-		addEnemy(Aircraft::Type::Avenger, 70.f, 1700.f);
-		addEnemy(Aircraft::Type::Avenger, 30.f, 1850.f);
-		addEnemy(Aircraft::Type::Raptor, 300.f, 2200.f);
-		addEnemy(Aircraft::Type::Raptor, -300.f, 2200.f);
-		addEnemy(Aircraft::Type::Raptor, 0.f, 2200.f);
-		addEnemy(Aircraft::Type::Raptor, 0.f, 2500.f);
-		addEnemy(Aircraft::Type::Avenger, -300.f, 2700.f);
-		addEnemy(Aircraft::Type::Avenger, -300.f, 2700.f);
-		addEnemy(Aircraft::Type::Raptor, 0.f, 3000.f);
-		addEnemy(Aircraft::Type::Raptor, 250.f, 3250.f);
-		addEnemy(Aircraft::Type::Raptor, -250.f, 3250.f);
-		addEnemy(Aircraft::Type::Avenger, 0.f, 3500.f);
-		addEnemy(Aircraft::Type::Avenger, 0.f, 3700.f);
-		addEnemy(Aircraft::Type::Raptor, 0.f, 3800.f);
-		addEnemy(Aircraft::Type::Avenger, 0.f, 4000.f);
-		addEnemy(Aircraft::Type::Avenger, -200.f, 4200.f);
-		addEnemy(Aircraft::Type::Raptor, 200.f, 4200.f);
-		addEnemy(Aircraft::Type::Raptor, 0.f, 4400.f);
-
-		std::sort(enemySpawnPoints_.begin(), enemySpawnPoints_.end(), 
-			[](Spawnpoint lhs, Spawnpoint rhs)
-		{
-			return lhs.y < rhs.y;
-		});
-	}*/
-
-	/*void World::addEnemy(Spawnpoint spawn)
-	{
-		Spawnpoint spawnpoint(type, spawnPosition_.x + relX, spawnPosition_.y - relY);
-		enemySpawnPoints_.push_back(spawnpoint);
-	}*/
 
 	//Play a random zombie groan noise for atmosphere every 15 secomds
 	void World::playZombieGroan()
@@ -249,7 +218,7 @@ namespace GEX
 
 		while (enemySpawnTimer_ >= enemySpawnDelay_)
 		{
-			if (activeZombies_.size() < 25)
+			if (activeZombies_.size() < 30)
 			{
 				//TODO: Implement enemy randomizer here
 				auto spawnpoint = enemySpawnPoints_[randomInt(3)];
@@ -276,6 +245,7 @@ namespace GEX
 		return bounds;
 	}
 
+	//Make active enemies chase the player
 	void World::enemiesChasePlayer()
 	{
 		if (player_->getHitpoints() > 0)
@@ -283,7 +253,7 @@ namespace GEX
 			for (auto e : activeZombies_)
 			{
 				//If zombie is alive, chase player
-				if (e->getType() == Zombie::ZombieType::Zombie && e->getState() != Zombie::State::Dead)
+				if (e->getType() == Zombie::ZombieType::Zombie && e->getHitpoints() > 0)
 				{
 					auto d = distance(*player_, *e);
 
@@ -301,52 +271,11 @@ namespace GEX
 					e->setVelocity(velocityTemp * e->getMaxSpeed());
 				}
 				//If zombie is dead, set velocity to 0
-				else if (e->getType() == Zombie::ZombieType::Zombie && e->getState() == Zombie::State::Dead)
+				else 
 					e->setVelocity(0.f, 0.f);
 			}
 		}
 	}
-
-	//void World::guideMissiles()
-	//{
-	//	// build a list of active Enemies
-	//	Command enemyCollector;
-	//	enemyCollector.category = Category::EnemyAircraft;
-	//	enemyCollector.action = derivedAction<Player>([this](Player& enemy, sf::Time dt)
-	//	{
-	//		if (!enemy.isDestroyed())
-	//			activeEnemies_.push_back(&enemy);
-	//	});
-
-	//	Command missileGuider;
-	//	missileGuider.category = Category::Type::AlliedProjectile;
-	//	missileGuider.action = derivedAction<Projectile>([this](Projectile& missile, sf::Time dt)
-	//	{
-	//		//ignore bullets
-	//		if (!missile.isGuided())
-	//			return;
-
-	//		float minDistance = std::numeric_limits<float>::max();
-	//		Player* closestEnemy = nullptr;
-
-	//		for (Player* e : activeEnemies_)
-	//		{
-	//			auto d = distance(missile, *e);
-	//			if (d < minDistance)
-	//			{
-	//				minDistance = d;
-	//				closestEnemy = e;
-	//			}
-	//		}
-
-	//		if (closestEnemy)
-	//			missile.guidedTowards(closestEnemy->getWorldPosition());
-	//	});
-
-	//	commandQueue_.push(enemyCollector);
-	//	commandQueue_.push(missileGuider);
-	//	activeEnemies_.clear();
-	//}
 
 	bool matchesCategory(SceneNode::Pair& colliders, Category::Type type1, Category::Type type2)
 	{
@@ -421,7 +350,7 @@ namespace GEX
 					else
 						score_ += 200;
 
-					zombie.playLocalSound(commandQueue_, SoundEffectID::ZombieDeath);
+					//zombie.playLocalSound(commandQueue_, SoundEffectID::ZombieDeath);
 
 					multiplier_++;
 				}
@@ -434,18 +363,30 @@ namespace GEX
 				auto& zombie = static_cast<Zombie&>(*pair.first);
 				auto& zombie2 = static_cast<Zombie&>(*pair.second);
 
-				//Just move zombie a bit for now
-				//TODO: Find a better way to handle this
-				zombie.setPosition(zombie.getPosition().x + 10.f, zombie.getPosition().y + 10.f);
-
-				/*if (zombie.getWorldPosition().x > zombie2.getWorldPosition().x)
+				//Move zombie based on orientation
+				switch (zombie.getState())
 				{
-					zombie.setPosition(zombie2.getPosition().x - 13.f)
-				}*/
+					case Zombie::State::Left:
+						zombie.setPosition(zombie.getPosition().x + 5.f, zombie.getPosition().y);
+						break;
+					case Zombie::State::Down:
+						zombie.setPosition(zombie.getPosition().x , zombie.getPosition().y - 5.f);
+						break;
+					case Zombie::State::Right:
+						zombie.setPosition(zombie.getPosition().x - 5.f, zombie.getPosition().y);
+						break;
+					case Zombie::State::Up:
+						zombie.setPosition(zombie.getPosition().x, zombie.getPosition().y + 5.f);
+						break;
+					default:
+						//Do Nothing
+						break;
+				}
 			}
 		}
 	}
 
+	//Set up the 4 spawn points just on the outside of the view port
 	void World::setupSpawnPoints()
 	{
 		Spawnpoint point1(-50.f, worldView_.getSize().y / 2.f);
@@ -462,7 +403,7 @@ namespace GEX
 	void World::destroyEntitiesOutOfView()
 	{
 		Command command;
-		command.category = Category::Type::Projectile/* | Category::Type::EnemyAircraft*/;
+		command.category = Category::Type::Projectile;
 		command.action = derivedAction<Entity>([this](Entity& e, sf::Time dt)
 		{
 			if (!getBattlefieldBounds().intersects(e.getBoundingBox()))
@@ -490,18 +431,10 @@ namespace GEX
 		return !player_->isDestroyed();
 	}
 
-	/*bool World::hasPlayerReachedEnd() const
-	{
-		return !worldBounds_.contains(player_->getPosition());
-	}*/
-
 	void World::loadTextures()
 	{
 		textures_.load(GEX::TextureID::Entities, "Media/Textures/Entities.png");
-		//textures_.load(GEX::TextureID::Jungle, "Media/Textures/JungleBig.png");
 		textures_.load(GEX::TextureID::Particle, "Media/Textures/Particle.png");
-		textures_.load(GEX::TextureID::Explosion, "Media/Textures/Explosion.png");
-		//textures_.load(GEX::TextureID::FinishLine, "Media/Textures/FinishLine.png");
 		textures_.load(GEX::TextureID::LunarBackground, "Media/Textures/lunar_background.png");
 
 		//Zombie and Skeleton
@@ -551,13 +484,6 @@ namespace GEX
 		std::unique_ptr<SoundNode> sNode(new SoundNode(sounds_));
 		sceneGraph_.attachChild(std::move(sNode));
 
-		// Particle System
-		std::unique_ptr<ParticleNode> smoke(new ParticleNode(Particle::Type::Smoke, textures_));
-		sceneLayers_[LowerGround]->attachChild(std::move(smoke));
-
-		std::unique_ptr<ParticleNode> fire(new ParticleNode(Particle::Type::Propellant, textures_));
-		sceneLayers_[LowerGround]->attachChild(std::move(fire));
-
 		// draw background
 		sf::Texture& texture = textures_.get(TextureID::LunarBackground);
 		sf::IntRect textureRect(worldBounds_);
@@ -567,15 +493,10 @@ namespace GEX
 		backgroundSprite->setPosition(worldBounds_.left, worldBounds_.top);
 		sceneLayers_[Background]->attachChild(std::move(backgroundSprite));
 
-		// add player aircraft & game objects
-			//player
+		// Ddd player
 		std::unique_ptr<Player> leader(new Player(Player::Type::Player, textures_));
 		leader->setPosition(spawnPosition_);
-		/*leader->setVelocity(50.f, scrollSpeed_);*/
 		player_ = leader.get();
 		sceneLayers_[Ground]->attachChild(std::move(leader));
-
-		// add enemy planes
-		/*addEnemies();*/
 	}
 }

@@ -63,29 +63,24 @@ namespace GEX
 		, directionIndex_(0)
 		, attackCommand_()
 		, spawnPickup_(false)
+		, dropPickupCommand_()
 		, showDeath_(false)
 		, hasPlayedDeathSound_(false)
 		, attackInterval_(sf::Time::Zero)
 		, attackClock_()
 	{
 		setupAnimations();
+
+		//Set up drop pickup command
+		dropPickupCommand_.category = Category::GroundLayer;
+		dropPickupCommand_.action = [this, &textures](SceneNode& node, sf::Time dt)
+		{
+			createPickup(node, textures);
+		};
 	}
 
 	void Zombie::drawCurrent(sf::RenderTarget & target, sf::RenderStates states) const
 	{
-		/*target.draw(sprite_, states);*/
-
-		/*if (getVelocity().x > 0)
-			target.draw(walkRight_, states);
-		else if (getVelocity().x < 0)
-			target.draw(walkLeft_, states);
-		else if (getVelocity().y > 0)
-			target.draw(walkDown_, states);
-		else if (getVelocity().y < 0)
-			target.draw(walkUp_, states);
-		else if (getVelocity().x == 0 && getVelocity().y == 0)
-			target.draw(sprite_, states);*/
-
 		switch (state_)
 		{
 		case Zombie::State::Up:
@@ -126,7 +121,7 @@ namespace GEX
 
 	bool Zombie::isMarkedForRemoval() const
 	{
-		return isDestroyed() && death_.isFinished();/* && state_ == Zombie::State::Dead;*/
+		return isDestroyed() && death_.isFinished();
 	}
 
 	void Zombie::remove()
@@ -186,15 +181,6 @@ namespace GEX
 		//Update the states
 		updateStates(dt);
 
-		/*if (getVelocity().x > 0)
-			walkRight_.update(dt);
-		else if (getVelocity().x < 0)
-			walkLeft_.update(dt);
-		else if (getVelocity().y > 0)
-			walkDown_.update(dt);
-		else if (getVelocity().y < 0)
-			walkUp_.update(dt);*/
-
 		switch (state_)
 		{
 			case Zombie::State::Up:
@@ -224,12 +210,12 @@ namespace GEX
 			death_.update(dt);
 
 			//Play Death Sound
-			/*if (!hasPlayedDeathSound_)
+			if (!hasPlayedDeathSound_)
 			{
 				hasPlayedDeathSound_ = true;
 				SoundEffectID effect = SoundEffectID::ZombieDeath;
 				playLocalSound(commands, effect);
-			}*/
+			}
 		}
 
 	}

@@ -45,10 +45,11 @@ namespace GEX
 	public:
 		enum class Type
 		{
-			HealthRefill,
+			/*HealthRefill,
 			MissileRefill,
 			FireSpread,
-			FireRate,
+			FireRate,*/
+			AmmoRefill,
 			Count
 		};
 
